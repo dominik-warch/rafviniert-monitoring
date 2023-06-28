@@ -15,10 +15,12 @@ use \ForceUTF8\Encoding;
 class CitizensMasterImport implements ToModel, WithChunkReading, WithHeadingRow
 {
     protected $columnMapping;
+    protected $dataset_date;
 
-    public function __construct(array $columnMapping)
+    public function __construct(array $columnMapping, $dataset_date)
     {
         $this->columnMapping = $columnMapping;
+        $this->dataset_date = $dataset_date;
     }
 
     /**
@@ -39,7 +41,7 @@ class CitizensMasterImport implements ToModel, WithChunkReading, WithHeadingRow
         return new CitizensMaster([
             'gender' => $row[$this->columnMapping['gender']],
             'year_of_birth' => $row[$this->columnMapping['year_of_birth']],
-            'dataset_date' => Carbon::create(2041, 10, 05), // TODO
+            'dataset_date' => $this->dataset_date,
             'zip_code' => $row[$this->columnMapping['zip_code']],
             'city' => Encoding::toUTF8($row[$this->columnMapping['city']]),
             'street' => Encoding::toUTF8($row[$this->columnMapping['street']]),

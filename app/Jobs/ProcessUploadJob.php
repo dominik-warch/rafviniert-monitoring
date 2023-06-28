@@ -31,7 +31,7 @@ class ProcessUploadJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $import = new CitizensMasterImport($this->upload->column_mapping);
+        $import = new CitizensMasterImport($this->upload->column_mapping, $this->upload->dataset_date);
 
         // Import the data from the uploaded file
         Excel::import($import, $this->upload->file_path);

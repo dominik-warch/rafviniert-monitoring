@@ -2,7 +2,15 @@
     <form action="{{ route('store_mapping') }}" method="post">
         @csrf
         @php
-            $fields = ['zip_code', 'city', 'street', 'housenumber', 'housenumber_extra', 'year_of_birth', 'gender'];
+            $fields = [
+                'PLZ' => 'zip_code',
+                'Ort' => 'city',
+                'Straße' => 'street',
+                'Hausnummer' => 'housenumber',
+                'Hausnummer-Zusatz' => 'housenumber_extra',
+                'Geburtsjahr' => 'year_of_birth',
+                'Geschlecht' => 'gender'
+            ];
         @endphp
 
         <div class="space-y-12 sm:space-y-16">
@@ -21,22 +29,22 @@
 
                 <div class="mt-10 space-y-8 border-b border-gray-900/10 pb-12 sm:space-y-0 sm:divide-y sm:divide-gray-900/10 sm:border-t sm:pb-0">
 
-                    @foreach($fields as $field)
-                    <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
-                        <label for="{{ $field }}" class="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5">
-                            {{ ucfirst(str_replace('_', ' ', $field)) }}
-                        </label>
-                        <div class="mt-2 sm:col-span-2 sm:mt-0">
-                            <select id="{{ $field }}" name="columns[{{ $field }}]" class="block w-full rounded-md
-                            border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2
-                            focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-                                <option value="">Bitte Spalte auswählen...</option>
-                                @foreach($headers as $header)
-                                    <option value="{{ $header }}">{{ $header }}</option>
-                                @endforeach
-                            </select>
+                    @foreach($fields as $label => $field)
+                        <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
+                            <label for="{{ $field }}" class="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5">
+                                {{ $label }}
+                            </label>
+                            <div class="mt-2 sm:col-span-2 sm:mt-0">
+                                <select id="{{ $field }}" name="columns[{{ $field }}]" class="block w-full rounded-md
+                                    border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2
+                                    focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+                                    <option value="">Bitte Spalte auswählen...</option>
+                                    @foreach($headers as $header)
+                                        <option value="{{ $header }}">{{ $header }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
-                    </div>
                     @endforeach
                 </div>
             </div>

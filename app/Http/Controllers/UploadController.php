@@ -20,12 +20,13 @@ class UploadController extends Controller
     {
         $request->validate([
             'file' => 'required|file',
+            'dataset_date' => 'required|date',
         ]);
 
         $path = $request->file('file')->store('uploads');
         $headers = Excel::toArray(new HeadingRowImport, $path)[0][0];
 
-        session(['headers' => $headers, 'file_path' => $path]);
+        session(['headers' => $headers, 'file_path' => $path, 'dataset_date' => $request->input('dataset_date')]);
 
         // Redirect to the mapping form
         return redirect()->route('mapping_form');
@@ -46,7 +47,7 @@ class UploadController extends Controller
         // Create a new upload record
         $upload = Upload::create([
             'file_path' => session('file_path'),
-            'dataset_date' => $request->input('dataset_date'),
+            'dataset_date' => session('dataset_date'),
             'column_mapping' => $request->input('columns'),
         ]);
 
