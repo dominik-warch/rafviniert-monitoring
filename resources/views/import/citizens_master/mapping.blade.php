@@ -1,5 +1,5 @@
 <x-app-layout>
-    <form action="{{ route('store_mapping') }}" method="post">
+    <form action="{{ route('import.citizens-master.mapping.store') }}" method="post">
         @csrf
         @php
             $fields = [

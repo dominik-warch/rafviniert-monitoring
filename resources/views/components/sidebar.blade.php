@@ -30,7 +30,7 @@
                                 </button>
                                 <ul x-description="Expandable link section, show/hide based on state" class="mt-1 px-2" id="sub-menu-1" x-show="open">
                                     <li>
-                                        <x-nav-link href="{{ route('upload_form') }}" :active="request()->routeIs('upload_form')" class="block">Import Melderegister</x-nav-link>
+                                        <x-nav-link href="{{ route('import.citizens-master.create') }}" :active="request()->routeIs('import.citizens-master.create')" class="block">Import Melderegister</x-nav-link>
                                     </li>
                                 </ul>
                             </div>

@@ -3,7 +3,7 @@
 namespace App\Jobs;
 
 use App\Imports\CitizensMasterImport;
-use App\Models\Upload;
+use App\Models\Import;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -12,7 +12,7 @@ use Illuminate\Queue\SerializesModels;
 use Maatwebsite\Excel\Facades\Excel;
 
 
-class ProcessUploadJob implements ShouldQueue
+class ProcessImportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -21,7 +21,7 @@ class ProcessUploadJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(Upload $upload)
+    public function __construct(Import $upload)
     {
         $this->upload = $upload;
     }

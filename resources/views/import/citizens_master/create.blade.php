@@ -1,5 +1,5 @@
 <x-app-layout>
-    <form action="{{ route('store_upload') }}" method="post" enctype="multipart/form-data">
+    <form action="{{ route('import.citizens-master.store') }}" method="post" enctype="multipart/form-data">
         @csrf
 
         <div class="space-y-12 sm:space-y-16">

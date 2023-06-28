@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\ProcessUploadJob;
-use App\Models\Upload;
+use App\Jobs\ProcessImportJob;
+use App\Models\Import;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\HeadingRowImport;
 
-class UploadController extends Controller
+class ImportController extends Controller
 {
     public function create(): View
     {
-        return view('uploads.create');
+        return view('import.citizens_master.create');
     }
 
     public function store(Request $request)
@@ -23,13 +23,13 @@ class UploadController extends Controller
             'dataset_date' => 'required|date',
         ]);
 
-        $path = $request->file('file')->store('uploads');
+        $path = $request->file('file')->store('import');
         $headers = Excel::toArray(new HeadingRowImport, $path)[0][0];
 
         session(['headers' => $headers, 'file_path' => $path, 'dataset_date' => $request->input('dataset_date')]);
 
         // Redirect to the mapping form
-        return redirect()->route('mapping_form');
+        return redirect()->route('import.citizens-master.mapping.create');
 
     }
 
@@ -39,22 +39,22 @@ class UploadController extends Controller
         $headers = session('headers');
 
         // Pass the headers to the mapping view
-        return view('uploads.mapping', ['headers' => $headers]);
+        return view('import.citizens_master.mapping', ['headers' => $headers]);
     }
 
     public function storeMapping(Request $request)
     {
         // Create a new upload record
-        $upload = Upload::create([
+        $upload = Import::create([
             'file_path' => session('file_path'),
             'dataset_date' => session('dataset_date'),
             'column_mapping' => $request->input('columns'),
         ]);
 
         // Dispatch the job to process the upload
-        ProcessUploadJob::dispatch($upload);
+        ProcessImportJob::dispatch($upload);
 
         // Redirect to a success page
-        return redirect()->route('upload_form');
+        return redirect()->route('import.citizens-master.create');
     }
 }
