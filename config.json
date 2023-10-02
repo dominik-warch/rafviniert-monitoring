@@ -10,11 +10,22 @@
         "mapStyle": "https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_col.json",
         "layers": [
             {
-                "id": "example-layer",
-                "type": "exampleType",
-                "data": "exampleData",
-                "paint": {
-                    "examplePaintProperty": "exampleValue"
+                "id": "mean-age",
+                "type": "geojson",
+                "endpoint": "https://ogc-api.rafviniert.de/collections/mean-age/items?f=json&limit=2000",
+                "thresholds": {
+                    "low": {
+                        "threshold": 44,
+                        "color": [23, 255, 0]
+                    },
+                    "medium": {
+                        "threshold": 46,
+                        "color": [254, 231, 0]
+                    },
+                    "high": {
+                        "threshold": 46,
+                        "color": [251, 69, 0]
+                    }
                 }
             }
         ],

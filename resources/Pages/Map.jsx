@@ -1,12 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import DeckGL from '@deck.gl/react';
 import maplibregl from 'maplibre-gl';
 import { Map as MapGL, NavigationControl } from 'react-map-gl/maplibre';
 
+import createGeoJsonLayer from "../components/GeoJsonLayerComponent.js";
+
 import config from '../../config.json';
 
 const Map = () => {
-    const {initialViewState, mapStyle} = config.map;
+    const {initialViewState, mapStyle, layers: layerConfigs} = config.map;
+    const [layers, setLayers] = useState([])
+
+    useEffect(() => {
+        const loadLayers = async () => {
+            const loadedLayers = await Promise.all(
+                layerConfigs.map(layerConfig => createGeoJsonLayer(layerConfig))
+            );
+            setLayers(loadedLayers);
+        };
+
+        loadLayers();
+    }, [layerConfigs])
 
     return (
         <div className="flex flex-col h-screen">
@@ -27,6 +41,7 @@ const Map = () => {
                 <DeckGL
                     initialViewState={initialViewState}
                     controller={true}
+                    layers={layers}
                 >
                     <MapGL
                         reuseMaps
