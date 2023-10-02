@@ -1,0 +1,23 @@
+{
+    "map": {
+        "initialViewState": {
+            "longitude": 7.772141,
+            "latitude": 49.500577,
+            "zoom": 14,
+            "pitch": 0,
+            "bearing": 0
+        },
+        "mapStyle": "https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_col.json",
+        "layers": [
+            {
+                "id": "example-layer",
+                "type": "exampleType",
+                "data": "exampleData",
+                "paint": {
+                    "examplePaintProperty": "exampleValue"
+                }
+            }
+        ],
+        "popupContent": "Example Popup Content"
+    }
+}

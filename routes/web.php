@@ -33,4 +33,4 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
 Route::get('/map', function () {
     return Inertia::render('Map');
-});
+})->name('map');
