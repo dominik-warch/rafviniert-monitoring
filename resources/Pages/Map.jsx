@@ -4,12 +4,16 @@ import maplibregl from 'maplibre-gl';
 import { Map as MapGL, NavigationControl } from 'react-map-gl/maplibre';
 
 import createGeoJsonLayer from "../components/GeoJsonLayerComponent.js";
+import LayerControl from "../components/LayerControl.jsx";
 
 import config from '../../config.json';
 
 const Map = () => {
     const {initialViewState, mapStyle, layers: layerConfigs} = config.map;
     const [layers, setLayers] = useState([])
+    const [layerVisibility, setLayerVisibility] = useState({});
+
+    const [isSidePaneVisible, setIsSidePaneVisible] = useState(false);
 
     useEffect(() => {
         const loadLayers = async () => {
@@ -21,6 +25,31 @@ const Map = () => {
 
         loadLayers();
     }, [layerConfigs])
+
+    useEffect(() => {
+        const visibility = layers.reduce((acc, layer) => {
+            acc[layer.id] = layer.props.visible;
+            return acc;
+        }, {});
+        setLayerVisibility(visibility);
+    }, [layers])
+
+    const handleToggleLayer = async (layerId) => {
+        const updatedLayers = await Promise.all(
+            layers.map(async layer => {
+                if (layer.id === layerId) {
+                    const originalConfig = layerConfigs.find(config => config.id === layerId);
+                    const updatedLayer = await createGeoJsonLayer({
+                        ...originalConfig,
+                        initialVisible: !layer.props.visible
+                    });
+                    return updatedLayer;
+                }
+                return layer;
+            })
+        );
+        setLayers(updatedLayers);
+    };
 
     return (
         <div className="flex flex-col h-screen">
@@ -35,8 +64,31 @@ const Map = () => {
                         </div>
                     </div>
                 </nav>
-            </div>
 
+            </div>
+            {isSidePaneVisible && (
+                <div className="absolute top-20 left-0 w-64 max-h-screen overflow-y-auto z-50 shadow-lg"> {/* Adjusted max-height */}
+                    <button
+                        onClick={() => setIsSidePaneVisible(!isSidePaneVisible)}
+                        className="absolute top-0 left-full bg-white p-2 rounded-r shadow-lg" // Positioned absolutely within the side pane
+                    >
+                        Toggle Layers
+                    </button>
+                    <LayerControl
+                        layers={layerConfigs}
+                        onToggle={handleToggleLayer}
+                        layerVisibility={layerVisibility}
+                    />
+                </div>
+            )}
+            {!isSidePaneVisible && (
+                <button
+                    onClick={() => setIsSidePaneVisible(!isSidePaneVisible)}
+                    className="absolute top-20 left-4 z-50 bg-white p-2 rounded shadow-lg" // Adjusted top value and z-index
+                >
+                    Open Layers
+                </button>
+            )}
             <div className="flex-grow relative">
                 <DeckGL
                     initialViewState={initialViewState}

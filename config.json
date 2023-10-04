@@ -11,6 +11,7 @@
         "layers": [
             {
                 "id": "mean-age",
+                "name": "Durchschnittsalter",
                 "type": "geojson",
                 "endpoint": "https://ogc-api.rafviniert.de/collections/mean-age/items?f=json&limit=2000",
                 "thresholds": {
@@ -26,7 +27,29 @@
                         "threshold": 46,
                         "color": [251, 69, 0]
                     }
-                }
+                },
+                "initialVisible": true
+            },
+            {
+                "id": "median-age",
+                "name": "Medianalter",
+                "type": "geojson",
+                "endpoint": "https://ogc-api.rafviniert.de/collections/median-age/items?f=json&limit=2000",
+                "thresholds": {
+                    "low": {
+                        "threshold": 44,
+                        "color": [23, 255, 0]
+                    },
+                    "medium": {
+                        "threshold": 46,
+                        "color": [254, 231, 0]
+                    },
+                    "high": {
+                        "threshold": 46,
+                        "color": [251, 69, 0]
+                   }
+                },
+                "initialVisible": false
             }
         ],
         "popupContent": "Example Popup Content"

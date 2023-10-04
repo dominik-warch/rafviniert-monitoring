@@ -1,6 +1,6 @@
 import { GeoJsonLayer } from '@deck.gl/layers';
 
-const createGeoJsonLayer = async ({ id, endpoint, thresholds }) => {
+const createGeoJsonLayer = async ({ id, endpoint, thresholds, initialVisible }) => {
     try {
         const response = await fetch(endpoint);
         const data = await response.json();
@@ -8,6 +8,7 @@ const createGeoJsonLayer = async ({ id, endpoint, thresholds }) => {
         return new GeoJsonLayer({
             id,
             data,
+            visible: initialVisible,
             getFillColor: feature => {
                 if (!feature.properties) return [255, 255, 255]; // Default color if properties are not defined
                 const value = feature.properties.value;
