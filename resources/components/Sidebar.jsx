@@ -1,7 +1,7 @@
 import React from "react";
 import LayerControl from "./LayerControl.jsx";
 
-const Sidebar = ({ layerConfigs, onToggle, layerVisibility, setIsSidebarOpen }) => {
+const Sidebar = ({ layerConfigs, layerGroups, onToggle, layerVisibility, setIsSidebarOpen }) => {
     return (
         <div className="fixed inset-y-0 z-50 flex w-80 transition-transform duration-300 bg-gray-50 transform translate-x-0">
             <div className="z-10 flex flex-col flex-1">
@@ -22,14 +22,8 @@ const Sidebar = ({ layerConfigs, onToggle, layerVisibility, setIsSidebarOpen }) 
 
                 </div>
 
-                <nav className="flex flex-col flex-1 w-64 p-4 mt-4">
-                    <LayerControl
-                        layers={layerConfigs}
-                        onToggle={onToggle}
-                        layerVisibility={layerVisibility}
-                    />
-
-                    <a href="#" className="flex items-center space-x-2">
+                <nav className="flex flex-col flex-1 p-4 mt-4">
+                    <a href="/dashboard" className="flex items-center space-x-2 pb-4">
                         <svg
                             className="w-6 h-6"
                             aria-hidden="true"
@@ -45,8 +39,15 @@ const Sidebar = ({ layerConfigs, onToggle, layerVisibility, setIsSidebarOpen }) 
                                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                             />
                         </svg>
-                        <span>Home</span>
+                        <span className="font-medium text-gray-900">Zurück</span>
                     </a>
+
+                    <LayerControl
+                        layers={layerConfigs}
+                        layerGroups={layerGroups}
+                        onToggle={onToggle}
+                        layerVisibility={layerVisibility}
+                    />
                 </nav>
             </div>
         </div>

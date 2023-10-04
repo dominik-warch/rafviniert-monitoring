@@ -7,11 +7,11 @@ import {useLayers} from "../components/useLayers.js";
 import config from '../../config.json';
 
 const Map = () => {
-    const {initialViewState, mapStyle, layers: layerConfigs} = config.map;
+    const {initialViewState, mapStyle, layerGroups, layers: layerConfigs} = config.map;
 
     const initialLayerVisibility = useMemo(() => {
-        return layerConfigs.reduce((acc, layerConfig) => {
-            acc[layerConfig.id] = layerConfig.initialVisible;
+        return Object.keys(layerConfigs).reduce((acc, layerId) => {
+            acc[layerId] = layerConfigs[layerId].initialVisible;
             return acc;
         }, {});
     }, [layerConfigs]);
@@ -26,6 +26,7 @@ const Map = () => {
             {isSidebarOpen && (
             <Sidebar
                 layerConfigs={layerConfigs}
+                layerGroups={layerGroups}
                 onToggle={handleToggleLayer}
                 layerVisibility={layerVisibility}
                 setIsSidebarOpen={setIsSidebarOpen}

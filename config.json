@@ -8,8 +8,20 @@
             "bearing": 0
         },
         "mapStyle": "https://sgx.geodatenzentrum.de/gdz_basemapde_vektor/styles/bm_web_col.json",
-        "layers": [
+        "layerGroups": [
             {
+                "groupId": "demographic",
+                "groupName": "Demogaphische Indikatoren",
+                "layerIds": ["mean-age", "median-age"]
+            },
+            {
+                "groupId": "Testgruppe",
+                "groupName": "Testgruppe",
+                "layerIds": ["test"]
+            }
+        ],
+        "layers": {
+            "mean-age": {
                 "id": "mean-age",
                 "name": "Durchschnittsalter",
                 "type": "geojson",
@@ -17,20 +29,32 @@
                 "thresholds": {
                     "low": {
                         "threshold": 44,
-                        "color": [23, 255, 0]
+                        "color": [
+                            23,
+                            255,
+                            0
+                        ]
                     },
                     "medium": {
                         "threshold": 46,
-                        "color": [254, 231, 0]
+                        "color": [
+                            254,
+                            231,
+                            0
+                        ]
                     },
                     "high": {
                         "threshold": 46,
-                        "color": [251, 69, 0]
+                        "color": [
+                            251,
+                            69,
+                            0
+                        ]
                     }
                 },
                 "initialVisible": true
             },
-            {
+            "median-age": {
                 "id": "median-age",
                 "name": "Medianalter",
                 "type": "geojson",
@@ -38,20 +62,65 @@
                 "thresholds": {
                     "low": {
                         "threshold": 44,
-                        "color": [23, 255, 0]
+                        "color": [
+                            23,
+                            255,
+                            0
+                        ]
                     },
                     "medium": {
                         "threshold": 46,
-                        "color": [254, 231, 0]
+                        "color": [
+                            254,
+                            231,
+                            0
+                        ]
                     },
                     "high": {
                         "threshold": 46,
-                        "color": [251, 69, 0]
-                   }
+                        "color": [
+                            251,
+                            69,
+                            0
+                        ]
+                    }
+                },
+                "initialVisible": false
+            },
+            "test": {
+                "id": "test",
+                "name": "test",
+                "type": "geojson",
+                "endpoint": "https://ogc-api.rafviniert.de/collections/mean-age/items?f=json&limit=2000",
+                "thresholds": {
+                    "low": {
+                        "threshold": 44,
+                        "color": [
+                            23,
+                            255,
+                            0
+                        ]
+                    },
+                    "medium": {
+                        "threshold": 46,
+                        "color": [
+                            254,
+                            231,
+                            0
+                        ]
+                    },
+                    "high": {
+                        "threshold": 46,
+                        "color": [
+                            251,
+                            69,
+                            0
+                        ]
+                    }
                 },
                 "initialVisible": false
             }
-        ],
+        },
         "popupContent": "Example Popup Content"
     }
 }
