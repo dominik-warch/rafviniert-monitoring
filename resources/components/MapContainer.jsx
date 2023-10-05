@@ -26,14 +26,12 @@ const MapContainer = ({ initialViewState, layers, mapStyle }) => {
                 reuseMaps
                 mapLib={maplibregl}
                 mapStyle={mapStyle}
-                width="100%"
-                height="100%"
                 initialViewState={initialViewState}
-                controller={true}
-
+                style={{ height: '100vh', width: '100vw' }}
             >
                 <DeckGLOverlay
                     layers={layers}
+                    interleaved={false}
                     onClick={handleClick}
                 />
                 <NavigationControl />
