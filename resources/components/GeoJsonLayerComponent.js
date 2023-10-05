@@ -8,6 +8,7 @@ const createGeoJsonLayer = async ({ id, endpoint, thresholds, initialVisible }) 
         return new GeoJsonLayer({
             id,
             data,
+            pickable: true,
             visible: initialVisible,
             getFillColor: feature => {
                 if (!feature.properties) return [255, 255, 255]; // Default color if properties are not defined
