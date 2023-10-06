@@ -13,10 +13,10 @@ function DeckGLOverlay(props) {
 }
 
 const MapContainer = ({ initialViewState, layers, mapStyle }) => {
-    const [selectedFeature, setSelectedFeature] = useState(null);
+    const [selectedFeatureEvent, setSelectedFeatureEvent] = useState(null);
     const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
     const handleClick = (event) => {
-        setSelectedFeature(event.object);
+        setSelectedFeatureEvent(event);
         setPopupPosition({ x: event.x, y: event.y });
     }
 
@@ -36,7 +36,7 @@ const MapContainer = ({ initialViewState, layers, mapStyle }) => {
                 />
                 <NavigationControl />
             </MapGL>
-            {selectedFeature && <Popup feature={selectedFeature} position={popupPosition} />}
+            {selectedFeatureEvent && <Popup featureEvent={selectedFeatureEvent} position={popupPosition} />}
         </>
 
     );
