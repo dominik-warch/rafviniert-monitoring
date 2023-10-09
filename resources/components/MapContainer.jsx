@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, forwardRef, useImperativeHandle } from 'react';
 import {MapboxOverlay} from '@deck.gl/mapbox';
 import maplibregl from 'maplibre-gl';
 import {useControl} from 'react-map-gl';
@@ -12,26 +12,35 @@ function DeckGLOverlay(props) {
     return null;
 }
 
-const MapContainer = ({ initialViewState, layers, mapStyle }) => {
+const MapContainer = forwardRef(({ initialViewState, layers, mapStyle }, ref) => {
+    const mapRef = useRef(null)
+
     const [selectedFeatureEvent, setSelectedFeatureEvent] = useState(null);
     const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
     const handleClick = (event) => {
+        if (!event) return;
         setSelectedFeatureEvent(event);
         setPopupPosition({ x: event.x, y: event.y });
     }
 
+    useImperativeHandle(ref, () => ({
+        getMapRef: () => mapRef.current,
+    }));
+
     return (
         <>
             <MapGL
+                ref={mapRef}
                 reuseMaps
                 mapLib={maplibregl}
                 mapStyle={mapStyle}
                 initialViewState={initialViewState}
+                preserveDrawingBuffer={true}
                 style={{ height: '100vh', width: '100vw' }}
             >
                 <DeckGLOverlay
                     layers={layers}
-                    interleaved={false}
+                    interleaved={true}
                     onClick={handleClick}
                 />
                 <NavigationControl />
@@ -40,6 +49,6 @@ const MapContainer = ({ initialViewState, layers, mapStyle }) => {
         </>
 
     );
-};
+});
 
 export default MapContainer;

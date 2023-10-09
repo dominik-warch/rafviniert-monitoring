@@ -2,6 +2,7 @@ import { createInertiaApp } from '@inertiajs/react'
 import { createRoot } from 'react-dom/client'
 
 import 'maplibre-gl/dist/maplibre-gl.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 createInertiaApp({
     resolve: name => {
