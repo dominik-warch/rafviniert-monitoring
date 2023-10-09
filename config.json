@@ -33,7 +33,8 @@
                             23,
                             255,
                             0
-                        ]
+                        ],
+                        "label": " unter 44 Jahre"
                     },
                     "medium": {
                         "threshold": 46,
@@ -41,7 +42,8 @@
                             254,
                             231,
                             0
-                        ]
+                        ],
+                        "label": " zwischen 44 und 46 Jahre"
                     },
                     "high": {
                         "threshold": 46,
@@ -49,7 +51,8 @@
                             251,
                             69,
                             0
-                        ]
+                        ],
+                        "label": "über 46 Jahre"
                     }
                 },
                 "initialVisible": true
@@ -66,7 +69,8 @@
                             23,
                             255,
                             0
-                        ]
+                        ],
+                        "label": "unter 44 Jahre"
                     },
                     "medium": {
                         "threshold": 46,
@@ -74,7 +78,8 @@
                             254,
                             231,
                             0
-                        ]
+                        ],
+                        "label": "zwischen 44 und 46 Jahre"
                     },
                     "high": {
                         "threshold": 46,
@@ -82,7 +87,8 @@
                             251,
                             69,
                             0
-                        ]
+                        ],
+                        "label": "über 46 Jahre"
                     }
                 },
                 "initialVisible": false
@@ -99,7 +105,8 @@
                             23,
                             255,
                             0
-                        ]
+                        ],
+                        "label": "test 1"
                     },
                     "medium": {
                         "threshold": 46,
@@ -107,7 +114,8 @@
                             254,
                             231,
                             0
-                        ]
+                        ],
+                        "label": "test 2"
                     },
                     "high": {
                         "threshold": 46,
@@ -115,7 +123,8 @@
                             251,
                             69,
                             0
-                        ]
+                        ],
+                        "label": "test 3"
                     }
                 },
                 "initialVisible": false
