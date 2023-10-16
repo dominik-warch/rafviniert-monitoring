@@ -1,4 +1,4 @@
-import React, { useState, useRef, forwardRef, useImperativeHandle } from 'react';
+import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react';
 import {MapboxOverlay} from '@deck.gl/mapbox';
 import maplibregl from 'maplibre-gl';
 import {useControl} from 'react-map-gl';
@@ -12,8 +12,29 @@ function DeckGLOverlay(props) {
     return null;
 }
 
-const MapContainer = forwardRef(({ initialViewState, layers, mapStyle }, ref) => {
+const MapContainer = forwardRef(({ initialViewState, layers, mapStyle, onResize }, ref) => {
     const mapRef = useRef(null)
+    const containerRef = useRef(null);
+
+    useEffect(() => {
+        const resizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                const { width, height } = entry.contentRect;
+                onResize({ width, height }); // Passing dimensions upwards
+            }
+        });
+
+        if (containerRef.current) {
+            resizeObserver.observe(containerRef.current);
+        }
+
+        return () => {
+            if (containerRef.current) {
+                resizeObserver.unobserve(containerRef.current); // Clean up observer on component unmount
+            }
+        };
+    }, [containerRef, onResize]);
+
 
     const [selectedFeatureEvent, setSelectedFeatureEvent] = useState(null);
     const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
@@ -28,7 +49,7 @@ const MapContainer = forwardRef(({ initialViewState, layers, mapStyle }, ref) =>
     }));
 
     return (
-        <>
+        <div ref={containerRef} style={{ height: '100vh', width: '100vw' }}>
             <MapGL
                 ref={mapRef}
                 reuseMaps
@@ -46,7 +67,7 @@ const MapContainer = forwardRef(({ initialViewState, layers, mapStyle }, ref) =>
                 <NavigationControl />
             </MapGL>
             {selectedFeatureEvent && <Popup featureEvent={selectedFeatureEvent} position={popupPosition} />}
-        </>
+        </div>
 
     );
 });

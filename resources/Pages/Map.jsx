@@ -4,7 +4,8 @@ import { ToastContainer, toast } from 'react-toastify';
 
 import Sidebar from "../components/Sidebar.jsx";
 import DynamicLegend from "../components/DynamicLegend.jsx";
-import ExportSidebar from "../components/ExportSidebar.jsx";
+//import ExportSidebar from "../components/ExportSidebar.jsx";
+//import PreviewOverlay from "../components/PreviewOverlay.jsx";
 import MapContainer from "../components/MapContainer.jsx";
 import {useLayers} from "../components/useLayers.js";
 
@@ -12,6 +13,7 @@ import config from '../../config.json';
 
 
 const Map = () => {
+    const mapContainerRef = useRef();
 
     const {initialViewState, mapStyle, layerGroups, layers: layerConfigs} = config.map;
 
@@ -28,11 +30,25 @@ const Map = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isLegendOpen, setIsLegendOpen] = useState(false);
     const [isExportOpen, setIsExportOpen] = useState(false);
+    const [exportOptions, setExportOptions] = useState({
+        pageSize: "A4",
+        orientation: "landscape",
+        format: "png",
+        dpi: "300",
+        x: 0,
+        y: 0,
+        width: 297,
+        height: 210,
+    });
 
-    // Export logic
-    const mapContainerRef = useRef();
+    const [mapDimensions, setMapDimensions] = useState({ width: 0, height: 0 });
+
+    const handleResize = (dimensions) => {
+        setMapDimensions(dimensions);
+    };
 
     const handleExport = useCallback((exportOptions) => {
+        //const { format, dpi, x, y, width, height } = exportOptions;
         const filename = "map.png";
 
         if (!mapContainerRef.current) {
@@ -46,7 +62,7 @@ const Map = () => {
                 const mapGL = mapContainerRef.current.getMapRef().getMap();
                 const maplibreCanvas = mapGL.getCanvas();
 
-                if (!maplibreCanvas) {
+                if (!maplibreCanvas || !(maplibreCanvas instanceof HTMLCanvasElement)) {
                     console.error("Unable to get canvas from MapLibre");
                     toast.error('Es gab einen Fehler beim Exportieren der Karte.');
                     return;
@@ -61,6 +77,18 @@ const Map = () => {
                     FileSaver.saveAs(blob, filename);
                     toast.success('Kartenexport erfolgreich!');
                 });
+
+                // const imgData = maplibreCanvas.getImageData(x, y, width, height);
+                // const exportCanvas = document.createElement("canvas");
+                // exportCanvas.width = width;
+                // exportCanvas.height = height;
+                // exportCanvas.getContext("2d").putImageData(imgData, 0, 0)
+                //
+                // exportCanvas.toBlob((blob) => {
+                //     FileSaver.saveAs(blob, filename);
+                //     toast.success('Kartenexport erfolgreich!');
+                // }, 'image/png');
+
             } catch (error) {
                 console.error("Export failed", error);
                 toast.error('Es gab einen Fehler beim Exportieren der Karte.');
@@ -75,9 +103,9 @@ const Map = () => {
         <div className="flex h-screen antialiased text-gray-900 bg-gray-100 dark:bg-dark dark:text-light">
 
 
-            <div className="fixed z-40 h-screen flex justify-center items-center">
+            <div className="fixed z-40 h-screen flex justify-center items-center ">
                 <div className="ml-6 flex w-16 flex-col items-center space-y-10 py-6">
-                    <div className="space-y-48 rounded-md bg-white">
+                    <div className="space-y-48 rounded-md bg-white border-solid border-gray-500 border-1 shadow-lg">
                         <div>
                             <button onClick={() => setIsSidebarOpen(true)} className="p-5">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -97,8 +125,11 @@ const Map = () => {
                                 </svg>
                             </button>
 
-                            <button onClick={() => setIsExportOpen(true)} className="p-5">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                            {/*<button onClick={() => setIsExportOpen(true)} className="p-5">*/}
+                            <button onClick={() => handleExport(true)} className="p-5">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                     strokeWidth="1.5" stroke="currentColor"
+                                     className="h-6 w-6 cursor-pointer text-gray-500 transition-all hover:text-blue-600">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 011.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z" />
                                 </svg>
                             </button>
@@ -133,12 +164,20 @@ const Map = () => {
                 />
             )}
 
-            {isExportOpen && (
-                <ExportSidebar
-                    onExport={handleExport}
-                    setIsExportOpen={setIsExportOpen}
-                />
-            )}
+            {/*{isExportOpen && (*/}
+            {/*    <ExportSidebar*/}
+            {/*        onExport={handleExport}*/}
+            {/*        setIsExportOpen={setIsExportOpen}*/}
+            {/*        exportOptions={exportOptions}*/}
+            {/*        setExportOptions={setExportOptions}*/}
+            {/*    />*/}
+            {/*)}*/}
+
+            {/*<PreviewOverlay*/}
+            {/*    exportOptions={exportOptions}*/}
+            {/*    setExportOptions={setExportOptions}*/}
+            {/*    mapDimensions={mapDimensions}*/}
+            {/*/>*/}
 
             <main className="flex flex-col items-center justify-center flex-1">
                 <MapContainer
@@ -146,6 +185,7 @@ const Map = () => {
                     initialViewState={initialViewState}
                     layers={layers}
                     mapStyle={mapStyle}
+                    onResize={handleResize}
                 />
             </main>
 
