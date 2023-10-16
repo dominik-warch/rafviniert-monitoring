@@ -1,8 +1,36 @@
-import React from "react";
+import React, { useMemo } from "react";
 import config from "../../config.json";
 
 const DynamicLegend = ({ layers, setIsLegendOpen }) => {
-    const activeLayers = layers.filter(layer => layer.props.visible);
+    const activeLayers = useMemo(() => layers.filter(layer => layer.props.visible), [layers]);
+
+    const renderGeoJSONLegend = (thresholds) => (
+        <div>
+            {Object.entries(thresholds).map(([key, { color, label }]) => (
+                <div key={key} className="flex items-center mb-1">
+                    <div className="w-5 h-5 mr-2 rounded" style={{ backgroundColor: `rgb(${color.join(',')})` }}></div>
+                    <span>{label}</span>
+                </div>
+            ))}
+        </div>
+    );
+
+    const renderHeatmapLegend = (colorRange) => (
+        <div>
+            <div className="flex items-center mb-1">
+                <div className="flex">
+                    {colorRange.map((color, index) => (
+                        <div
+                            key={index}
+                            className="w-5 h-5 mx-1 rounded"
+                            style={{ backgroundColor: `rgb(${color.join(',')})` }}
+                            title={`Color ${index + 1}`}
+                        ></div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
 
     return (
         <div className="fixed inset-y-0 z-50 flex w-80 transition-transform duration-300 bg-gray-50 transform translate-x-0">
@@ -19,7 +47,7 @@ const DynamicLegend = ({ layers, setIsLegendOpen }) => {
                         >
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
-                        <span className="sr-only">Close Legend</span>
+                        <span className="sr-only">Legende schließen</span>
                     </button>
                 </div>
 
@@ -29,12 +57,8 @@ const DynamicLegend = ({ layers, setIsLegendOpen }) => {
                         return (
                             <div key={layer.id} className="mb-4">
                                 <span className="block font-bold mb-2">{layerConfig.name}</span>
-                                {Object.entries(layerConfig.thresholds).map(([key, { color, label }]) => (
-                                    <div key={key} className="flex items-center mb-1">
-                                        <div className="w-5 h-5 mr-2 rounded" style={{ backgroundColor: `rgb(${color.join(',')})` }}></div>
-                                        <span>{label}</span>
-                                    </div>
-                                ))}
+                                {layerConfig.type === "geojson" && renderGeoJSONLegend(layerConfig.thresholds)}
+                                {layerConfig.type === "heatmap" && renderHeatmapLegend(layer.props.colorRange)}
                             </div>
                         );
                     })}
