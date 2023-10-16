@@ -3,6 +3,7 @@ import { createLayer } from "./LayerFactory.js";
 
 export const useLayers = (layerConfigs, layerVisibility, setLayerVisibility) => {
     const [layers, setLayers] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const loadLayers = async () => {
@@ -13,6 +14,8 @@ export const useLayers = (layerConfigs, layerVisibility, setLayerVisibility) => 
                 setLayers(loadedLayers);
             } catch (error) {
                 console.error("Failed to load layers:", error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -44,5 +47,5 @@ export const useLayers = (layerConfigs, layerVisibility, setLayerVisibility) => 
         setLayerVisibility(updatedVisibility);
     };
 
-    return { layers, layerVisibility, handleToggleLayer };
+    return { layers, layerVisibility, handleToggleLayer, isLoading };
 };

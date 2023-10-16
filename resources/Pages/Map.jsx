@@ -10,6 +10,7 @@ import MapControls from "../components/MapControls.jsx";
 
 import config from '../../config.json';
 import { toastConfig } from "../components/toastConfig.js";
+import Loading from "../components/Loading.jsx";
 
 const Map = () => {
     const {initialViewState, mapStyle, layerGroups, layers: layerConfigs} = config.map;
@@ -28,47 +29,54 @@ const Map = () => {
     const openSidebar = useCallback(() => setIsSidebarOpen(true), []);
     const openLegend = useCallback(() => setIsLegendOpen(true), []);
 
-    const { layers, handleToggleLayer } = useLayers(layerConfigs, layerVisibility, setLayerVisibility);
+    const { layers, handleToggleLayer, isLoading } = useLayers(layerConfigs, layerVisibility, setLayerVisibility);
     const { handleExport, mapContainerRef } = useMapExport();
 
     return (
         <div className="flex h-screen antialiased text-gray-900 bg-gray-100 dark:bg-dark dark:text-light">
+            {isLoading ? (
+                <Loading />
+            ) : (
+                <>
+                    <div className="fixed z-40 h-screen flex justify-center items-center ">
+                        <MapControls
+                            onSidebarOpen={openSidebar}
+                            onLegendOpen={openLegend}
+                            onExport={handleExport}
+                        />
+                    </div>
 
-            <div className="fixed z-40 h-screen flex justify-center items-center ">
-                <MapControls
-                    onSidebarOpen={openSidebar}
-                    onLegendOpen={openLegend}
-                    onExport={handleExport}
-                />
-            </div>
+                    {isSidebarOpen && (
+                        <Sidebar
+                            layerConfigs={layerConfigs}
+                            layerGroups={layerGroups}
+                            onToggle={handleToggleLayer}
+                            layerVisibility={layerVisibility}
+                            setIsSidebarOpen={setIsSidebarOpen}
+                        />
+                    )}
 
-            {isSidebarOpen && (
-                <Sidebar
-                    layerConfigs={layerConfigs}
-                    layerGroups={layerGroups}
-                    onToggle={handleToggleLayer}
-                    layerVisibility={layerVisibility}
-                    setIsSidebarOpen={setIsSidebarOpen}
-                />
+                    {isLegendOpen && (
+                        <DynamicLegend
+                            layers={layers}
+                            setIsLegendOpen={setIsLegendOpen}
+                        />
+                    )}
+
+                    <main className="flex flex-col items-center justify-center flex-1">
+                        <MapContainer
+                            ref={mapContainerRef}
+                            initialViewState={initialViewState}
+                            layers={layers}
+                            mapStyle={mapStyle}
+                        />
+                    </main>
+
+                    <ToastContainer {...toastConfig} />
+                </>
             )}
 
-            {isLegendOpen && (
-                <DynamicLegend
-                    layers={layers}
-                    setIsLegendOpen={setIsLegendOpen}
-                />
-            )}
 
-            <main className="flex flex-col items-center justify-center flex-1">
-                <MapContainer
-                    ref={mapContainerRef}
-                    initialViewState={initialViewState}
-                    layers={layers}
-                    mapStyle={mapStyle}
-                />
-            </main>
-
-            <ToastContainer {...toastConfig} />
         </div>
     );
 }
