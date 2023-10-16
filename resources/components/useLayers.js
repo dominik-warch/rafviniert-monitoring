@@ -1,5 +1,5 @@
 import { useEffect, useState} from "react";
-import createGeoJsonLayer from "./GeoJsonLayerComponent.js";
+import { createLayer } from "./LayerFactory.js";
 
 export const useLayers = (layerConfigs, layerVisibility, setLayerVisibility) => {
     const [layers, setLayers] = useState([]);
@@ -7,7 +7,7 @@ export const useLayers = (layerConfigs, layerVisibility, setLayerVisibility) => 
     useEffect(() => {
         const loadLayers = async () => {
             const loadedLayers = await Promise.all(
-                Object.values(layerConfigs).map(layerConfig => createGeoJsonLayer(layerConfig))
+                Object.values(layerConfigs).map(layerConfig => createLayer(layerConfig))
             );
             setLayers(loadedLayers);
         };
@@ -20,7 +20,7 @@ export const useLayers = (layerConfigs, layerVisibility, setLayerVisibility) => 
             layers.map(async layer => {
                 if (layer.id === layerId) {
                     const originalConfig = layerConfigs[layerId];
-                    const updatedLayer = await createGeoJsonLayer({
+                    const updatedLayer = await createLayer({
                         ...originalConfig,
                         initialVisible: !layer.props.visible
                     });
