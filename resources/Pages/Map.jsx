@@ -4,8 +4,6 @@ import { ToastContainer, toast } from 'react-toastify';
 
 import Sidebar from "../components/Sidebar.jsx";
 import DynamicLegend from "../components/DynamicLegend.jsx";
-//import ExportSidebar from "../components/ExportSidebar.jsx";
-//import PreviewOverlay from "../components/PreviewOverlay.jsx";
 import MapContainer from "../components/MapContainer.jsx";
 import {useLayers} from "../components/useLayers.js";
 
@@ -29,26 +27,8 @@ const Map = () => {
     const { layers, handleToggleLayer } = useLayers(layerConfigs, layerVisibility, setLayerVisibility);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [isLegendOpen, setIsLegendOpen] = useState(false);
-    const [isExportOpen, setIsExportOpen] = useState(false);
-    const [exportOptions, setExportOptions] = useState({
-        pageSize: "A4",
-        orientation: "landscape",
-        format: "png",
-        dpi: "300",
-        x: 0,
-        y: 0,
-        width: 297,
-        height: 210,
-    });
-
-    const [mapDimensions, setMapDimensions] = useState({ width: 0, height: 0 });
-
-    const handleResize = (dimensions) => {
-        setMapDimensions(dimensions);
-    };
 
     const handleExport = useCallback((exportOptions) => {
-        //const { format, dpi, x, y, width, height } = exportOptions;
         const filename = "map.png";
 
         if (!mapContainerRef.current) {
@@ -78,17 +58,6 @@ const Map = () => {
                     toast.success('Kartenexport erfolgreich!');
                 });
 
-                // const imgData = maplibreCanvas.getImageData(x, y, width, height);
-                // const exportCanvas = document.createElement("canvas");
-                // exportCanvas.width = width;
-                // exportCanvas.height = height;
-                // exportCanvas.getContext("2d").putImageData(imgData, 0, 0)
-                //
-                // exportCanvas.toBlob((blob) => {
-                //     FileSaver.saveAs(blob, filename);
-                //     toast.success('Kartenexport erfolgreich!');
-                // }, 'image/png');
-
             } catch (error) {
                 console.error("Export failed", error);
                 toast.error('Es gab einen Fehler beim Exportieren der Karte.');
@@ -96,8 +65,6 @@ const Map = () => {
         });
 
     }, [mapContainerRef]);
-
-
 
     return (
         <div className="flex h-screen antialiased text-gray-900 bg-gray-100 dark:bg-dark dark:text-light">
@@ -125,7 +92,6 @@ const Map = () => {
                                 </svg>
                             </button>
 
-                            {/*<button onClick={() => setIsExportOpen(true)} className="p-5">*/}
                             <button onClick={() => handleExport(true)} className="p-5">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                      strokeWidth="1.5" stroke="currentColor"
@@ -164,28 +130,12 @@ const Map = () => {
                 />
             )}
 
-            {/*{isExportOpen && (*/}
-            {/*    <ExportSidebar*/}
-            {/*        onExport={handleExport}*/}
-            {/*        setIsExportOpen={setIsExportOpen}*/}
-            {/*        exportOptions={exportOptions}*/}
-            {/*        setExportOptions={setExportOptions}*/}
-            {/*    />*/}
-            {/*)}*/}
-
-            {/*<PreviewOverlay*/}
-            {/*    exportOptions={exportOptions}*/}
-            {/*    setExportOptions={setExportOptions}*/}
-            {/*    mapDimensions={mapDimensions}*/}
-            {/*/>*/}
-
             <main className="flex flex-col items-center justify-center flex-1">
                 <MapContainer
                     ref={mapContainerRef}
                     initialViewState={initialViewState}
                     layers={layers}
                     mapStyle={mapStyle}
-                    onResize={handleResize}
                 />
             </main>
 

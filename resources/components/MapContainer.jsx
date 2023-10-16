@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, useRef, forwardRef, useImperativeHandle } from 'react';
 import {MapboxOverlay} from '@deck.gl/mapbox';
 import maplibregl from 'maplibre-gl';
 import {useControl} from 'react-map-gl';
@@ -16,28 +16,9 @@ const MapContainer = forwardRef(({ initialViewState, layers, mapStyle, onResize 
     const mapRef = useRef(null)
     const containerRef = useRef(null);
 
-    useEffect(() => {
-        const resizeObserver = new ResizeObserver(entries => {
-            for (let entry of entries) {
-                const { width, height } = entry.contentRect;
-                onResize({ width, height }); // Passing dimensions upwards
-            }
-        });
-
-        if (containerRef.current) {
-            resizeObserver.observe(containerRef.current);
-        }
-
-        return () => {
-            if (containerRef.current) {
-                resizeObserver.unobserve(containerRef.current); // Clean up observer on component unmount
-            }
-        };
-    }, [containerRef, onResize]);
-
-
     const [selectedFeatureEvent, setSelectedFeatureEvent] = useState(null);
     const [popupPosition, setPopupPosition] = useState({ x: 0, y: 0 });
+
     const handleClick = (event) => {
         if (!event) return;
         setSelectedFeatureEvent(event);
