@@ -40,6 +40,9 @@
                                     <li>
                                         <x-nav-link href="{{ route('import.citizens-master.create') }}" :active="request()->routeIs('import.citizens-master.create')" class="block">Import Melderegister</x-nav-link>
                                     </li>
+                                    <li>
+                                        <x-nav-link href="{{ route('import.reference-geometries.create') }}" :active="request()->routeIs('import.citizens-master.create')" class="block">Import Referenzgeometrien</x-nav-link>
+                                    </li>
                                 </ul>
                             </div>
                         </li>

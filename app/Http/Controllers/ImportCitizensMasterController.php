@@ -9,7 +9,7 @@ use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\HeadingRowImport;
 
-class ImportController extends Controller
+class ImportCitizensMasterController extends Controller
 {
     public function create(): View
     {
