@@ -4,17 +4,17 @@ namespace App\Imports;
 
 use App\Models\CitizensMaster;
 use Clickbar\Magellan\Data\Geometries\Point;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-use Carbon\Carbon;
-use \ForceUTF8\Encoding;
 
-
-class CitizensMasterImport implements ToModel, WithChunkReading, WithHeadingRow
+class CitizensMasterImport implements ToModel, WithChunkReading, WithHeadingRow, WithCustomCsvSettings
 {
-    protected $columnMapping;
+    protected array $columnMapping;
     protected $dataset_date;
 
     public function __construct(array $columnMapping, $dataset_date)
@@ -26,10 +26,16 @@ class CitizensMasterImport implements ToModel, WithChunkReading, WithHeadingRow
     /**
     * @param array $row
     *
-    * @return \Illuminate\Database\Eloquent\Model|null
+    * @return Model|null
     */
-    public function model(array $row)
+    public function model(array $row): CitizensMaster|null
     {
+        // Validate the row first
+        if (!$this->validateRow($row)) {
+            Log::warning("Skipped invalid row: ", $row);
+            return null; // Skip this row
+        }
+
         $geocodedAddress = $this->geocodeAddress(
             $row[$this->columnMapping['zip_code']],
             $row[$this->columnMapping['city']],
@@ -43,8 +49,8 @@ class CitizensMasterImport implements ToModel, WithChunkReading, WithHeadingRow
             'year_of_birth' => $row[$this->columnMapping['year_of_birth']],
             'dataset_date' => $this->dataset_date,
             'zip_code' => $row[$this->columnMapping['zip_code']],
-            'city' => Encoding::toUTF8($row[$this->columnMapping['city']]),
-            'street' => Encoding::toUTF8($row[$this->columnMapping['street']]),
+            'city' => $row[$this->columnMapping['city']],
+            'street' => $row[$this->columnMapping['street']],
             'housenumber' => $row[$this->columnMapping['housenumber']],
             'housenumber_ext' => $row[$this->columnMapping['housenumber_extra']],
             'geometry'=> Point::make($geocodedAddress['lon'], $geocodedAddress['lat'])
@@ -56,21 +62,120 @@ class CitizensMasterImport implements ToModel, WithChunkReading, WithHeadingRow
         return 500;
     }
 
+    public function getCsvSettings(): array
+    {
+        return [
+            'input_encoding' => 'ISO-8859-1'
+        ];
+    }
+
     protected function geocodeAddress($zipCode, $city, $street, $houseNumber, $houseNumberExtra)
     {
         // Implement the logic to geocode the address
-        // This is an example using the Google Maps Geocoding API
-        $address = urlencode("{$street} {$houseNumber} {$houseNumberExtra}, {$city}, {$zipCode}");
-        $url = "https://nominatim.rafviniert.de/search?q={$address}";
+        $address = urlencode("$street $houseNumber $houseNumberExtra, $city, $zipCode");
+        $url = "https://nominatim.rafviniert.de/search?q=$address";
+        $maxRetries = 3;
+        $retryDelay = 200000; // 200 milliseconds
 
-        $response = file_get_contents($url);
-        $data = json_decode($response, true);
+        for ($i = 0; $i < $maxRetries; $i++) {
+            try {
+                $response = @file_get_contents($url); // Suppressing warnings with @
+                if ($response === false) {
+                    throw new \Exception("Failed to fetch data from geocoding service.");
+                }
 
-        if (isset($data[0]['lat'])) {
-            return $data[0];
+                $data = json_decode($response, true);
+
+                if (isset($data[0]['lat'])) {
+                    Log::info('Successful geocode address: ' . $address);
+                    return $data[0];
+                } else {
+                    Log::warning('Failed to geocode address: ' . $address);
+                }
+
+            } catch (\Exception $e) {
+                Log::warning("Attempt " . ($i+1) . ": " . $e->getMessage());
+                if ($i < $maxRetries - 1) {
+                    usleep($retryDelay); // Wait before retrying
+                }
+            }
         }
 
-        // If the geocoding failed, return default coordinates
+        // After all retries failed, return default coordinates
+        Log::error("All geocoding attempts failed for address: $address");
         return ['lat' => 0, 'lon' => 0];
+    }
+
+    protected function validateRow(array $row): bool
+    {
+        // Define all the columns, where values are not required
+        $nullableColumns = [
+            $this->columnMapping['housenumber_extra']
+        ];
+
+        // Check for missing columns
+        foreach ($this->columnMapping as $key => $columnName) {
+            // If the column is nullable, skip the presence check
+            if (in_array($columnName, $nullableColumns)) {
+                continue;
+            }
+
+            if (!isset($row[$columnName]) || (isset($row[$columnName]) && $row[$columnName] === "")) {
+                Log::warning("Missing column $columnName in row: ", $row);
+                return false;
+            }
+        }
+
+
+        // Check for invalid data types or values
+        // Ensure 'gender' is a string
+        if (!is_string($row[$this->columnMapping['gender']])) {
+            Log::warning("Invalid data type for gender in row: ", $row);
+            return false;
+        }
+
+        // Year of birth check
+        if (!is_numeric($row[$this->columnMapping['year_of_birth']]) ||
+            $row[$this->columnMapping['year_of_birth']] < 1900 ||
+            $row[$this->columnMapping['year_of_birth']] > date("Y")) {
+            Log::warning("Invalid year_of_birth in row: ", $row);
+            return false;
+        }
+
+        // ZIP code check (assuming alphanumeric ZIP, adjust as needed)
+        if (!preg_match('/^[a-zA-Z0-9]+$/', $row[$this->columnMapping['zip_code']])) {
+            Log::warning("Invalid zip_code in row: ", $row);
+            return false;
+        }
+
+        // City check
+        if (!is_string($row[$this->columnMapping['city']]) ||
+            strlen($row[$this->columnMapping['city']]) > 255) {
+            Log::warning("Invalid city in row: ", $row);
+            return false;
+        }
+
+        // Street check
+        if (!is_string($row[$this->columnMapping['street']]) ||
+            strlen($row[$this->columnMapping['street']]) > 255) {
+            Log::warning("Invalid street in row: ", $row);
+            return false;
+        }
+
+        // Housenumber check (accepting numeric, letters, and some special characters)
+        $housenumber = (string) $row[$this->columnMapping['housenumber']];
+        if (!preg_match('/^[a-zA-Z0-9\-]+$/', $housenumber)) {
+            Log::warning("Invalid housenumber in row: ", $row);
+            return false;
+        }
+
+        // Housenumber extension check
+        if (!is_null($row[$this->columnMapping['housenumber_extra']]) &&
+            !is_string($row[$this->columnMapping['housenumber_extra']])) {
+            Log::warning("Invalid housenumber_ext in row: ", $row);
+            return false;
+        }
+
+        return true;
     }
 }

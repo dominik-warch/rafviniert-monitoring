@@ -6,6 +6,7 @@ use App\Jobs\ProcessImportJob;
 use App\Models\Import;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\HeadingRowImport;
 
@@ -53,6 +54,7 @@ class ImportCitizensMasterController extends Controller
 
         // Dispatch the job to process the upload
         ProcessImportJob::dispatch($upload);
+        Log::info("Dispatched job: Import of citizen master data");
 
         // Redirect to a success page
         return redirect()->route('import.citizens-master.create');

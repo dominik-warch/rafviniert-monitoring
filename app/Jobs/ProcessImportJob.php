@@ -4,7 +4,9 @@ namespace App\Jobs;
 
 use App\Imports\CitizensMasterImport;
 use App\Models\Import;
+use Exception;
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -16,7 +18,7 @@ class ProcessImportJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $upload;
+    protected Import $upload;
 
     /**
      * Create a new job instance.
@@ -28,12 +30,28 @@ class ProcessImportJob implements ShouldQueue
 
     /**
      * Execute the job.
+     * @throws Exception
      */
     public function handle(): void
     {
-        $import = new CitizensMasterImport($this->upload->column_mapping, $this->upload->dataset_date);
+        try {
+            Log::info("Starting the import");
+            $import = new CitizensMasterImport($this->upload->column_mapping, $this->upload->dataset_date);
 
-        // Import the data from the uploaded file
-        Excel::import($import, $this->upload->file_path);
+            // Import the data from the uploaded file
+            Excel::import($import, $this->upload->file_path);
+            Log::info("Finished import");
+        } catch (Exception $e) {
+            Log::error('Error during Excel import: ' . $e->getMessage());
+            throw $e;  // Re-throw the exception to ensure it's handled by the global exception handler or any subsequent code.
+        }
+
     }
+
+    /**
+     * The maximum number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public int $timeout = 7200;
 }
