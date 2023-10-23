@@ -1,31 +1,26 @@
 <x-app-layout>
     <!-- change action route -->
-    <form action="{{ route('calculations.median-age') }}" method="post" enctype="multipart/form-data">
+    <form action="{{ route('calculations.calculate') }}" method="post" enctype="multipart/form-data">
         @csrf
 
         <div class="space-y-12 sm:space-y-16">
             <div>
-                <h2 class="text-base font-semibold leading-7 text-gray-900">Import von Melderegister Stammdaten</h2>
-                <p class="mt-1 text-sm leading-6 text-gray-600">Zur Berechnung v.a. demographischer Indikatoren ist
-                    der Import von Melderegisterdaten erforderlich. Über diesen zweischrittigen Prozess können die
-                    Stammdaten importiert werden.
+                <h2 class="text-base font-semibold leading-7 text-gray-900">Indikatorenberechnung</h2>
+                <p class="mt-1 text-sm leading-6 text-gray-600">
+                    Hier können die Berechnungen der jeweiligen Indikatoren angestoßen werden. Dazu wählen Sie bitte aus
+                    den beiden Auswahlmenüs die Einwohnermeldedaten aus, die als Berechnungsgrundlage dienen sollen -
+                    gekennzeichnet durch deren Stichtagsdatum. Außerdem müssen Sie eine sogenannte Referenzgeometrie
+                    auswählen, die als Aggregationsebene der Berechnungen dient.
                 </p>
 
-                <p class="mt-1 text-sm leading-6 text-gray-600">Zuerst wählen Sie bitte die entsprechende Datei im
-                    Format .csv, .xls oder .xlsx (Excel) aus und drücken auf Hochladen.
-                </p>
 
-                <p class="mt-1 text-sm leading-6 text-gray-600">Achtung: Die Datei sollte über die Zeichencodierung
-                    UTF-8 verfügen, gerade bei CSV-Dateien ist dies nicht immer selbstverständlich. Falls Sie Zweifel
-                    haben, bitten Sie Ihren IT-Administrator um Hilfe.
-                </p>
 
                 <div class="mt-10 space-y-8 border-b border-gray-900/10 pb-12 sm:space-y-0 sm:divide-y sm:divide-gray-900/10 sm:border-t sm:pb-0">
 
                     <label
                         for="reference_geometry"
                         class="block text-sm font-medium leading-6 text-gray-900"
-                    >Reference Geometry:</label>
+                    >Referenzgeometrie</label>
                     <select
                         name="reference_geometry" required
                         class="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -38,7 +33,7 @@
                     <label
                         for="date_of_dataset"
                         class="block text-sm font-medium leading-6 text-gray-900"
-                    >Date of Dataset:</label>
+                    >Stichtag der Einwohnermeldedaten:</label>
                     <select
                         name="date_of_dataset" required
                         class="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -81,7 +76,9 @@
         @endif
 
         <div class="mt-6 flex items-center justify-end gap-x-6">
-            <button type="submit" class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Calculate Median Age</button>
+            <button type="submit" name="calculation_type" value="median" class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Medianalter berechnen</button>
+
+            <button type="submit" name="calculation_type" value="mean" class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Durchschnittsalter berechnen</button>
         </div>
     </form>
 </x-app-layout>

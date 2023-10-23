@@ -32,7 +32,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::post('/import/reference_geometries', [ImportReferenceGeometriesController::class, 'store'])->name('import.reference-geometries.store');
 
     Route::get('/calculations', [CalculationController::class, 'showCalculations'])->name('calculations.show-calculations');
-    Route::post('/calculations', [CalculationController::class, 'calculateMedianAge'])->name('calculations.median-age');
+    Route::post('/calculations', [CalculationController::class, 'calculate'])->name('calculations.calculate');
 
     Route::get('/map', function () {return Inertia::render('Map');})->name('map');
 });
