@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CalculationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ImportCitizensMasterController;
 use App\Http\Controllers\ImportReferenceGeometriesController;
@@ -29,6 +30,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     Route::get('/import/reference_geometries', [ImportReferenceGeometriesController::class, 'create'])->name('import.reference-geometries.create');
     Route::post('/import/reference_geometries', [ImportReferenceGeometriesController::class, 'store'])->name('import.reference-geometries.store');
+
+    Route::get('/calculations', [CalculationController::class, 'showCalculations'])->name('calculations.show-calculations');
+    Route::post('/calculations', [CalculationController::class, 'calculateMedianAge'])->name('calculations.median-age');
 
     Route::get('/map', function () {return Inertia::render('Map');})->name('map');
 });
