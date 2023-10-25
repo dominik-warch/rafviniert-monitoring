@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\CalculateGreyingIndex;
 use Illuminate\Http\Request;
 use App\Jobs\CalculateMedianAge;
 use App\Jobs\CalculateMeanAge;
@@ -34,8 +35,11 @@ class CalculationController extends Controller
             case "mean":
                 CalculateMeanAge::dispatch($referenceGeometry, $dateOfDataset);
                 break;
+            case "greying_index":
+                CalculateGreyingIndex::dispatch($referenceGeometry, $dateOfDataset);
+                break;
             default:
-                return redirect()->back()->withErrors(["Umknown calculation type"]);
+                return redirect()->back()->withErrors(["Unknown calculation type"]);
         }
 
         return redirect()->back()->with('message', 'Calculation started!');
