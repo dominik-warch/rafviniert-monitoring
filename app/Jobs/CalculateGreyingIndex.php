@@ -95,6 +95,8 @@ class CalculateGreyingIndex implements ShouldQueue
                                 'updated_at' => $now,
                             ];
                         }
+                        Log::info('Greying Index calculation completed successfully.');
+
                     } catch (Exception $e) {
                         Log::error("Error processing feature $feature->id: {$e->getMessage()}");
                     }

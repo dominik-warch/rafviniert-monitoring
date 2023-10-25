@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Models\AgedDependencyRatio;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -9,19 +11,19 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\CitizensMaster;
 use App\Models\ReferenceGeometry;
-use App\Models\MedianAge;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 /**
- * Job to calculate the median age for given reference geometry and dataset date.
+ * Job to calculate the mean age for given reference geometry and dataset date.
  */
-class CalculateMedianAge implements ShouldQueue
+class CalculateAgedDependencyRatio implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $referenceGeometry;
-    protected $dateOfDataset;
+    protected string $referenceGeometry;
+    protected string $dateOfDataset;
 
     /**
      * Create a new job instance.
@@ -37,8 +39,9 @@ class CalculateMedianAge implements ShouldQueue
 
     /**
      * Execute the job.
+     * @throws Throwable
      */
-    public function handle()
+    public function handle(): void
     {
         // Fetch all polygons for the given reference geometry
         // Use chunking to avoid memory issues with large datasets
@@ -62,12 +65,16 @@ class CalculateMedianAge implements ShouldQueue
                         }
 
                         if (!empty($ageValues)) {
-                            $medianAge = $this->calculateMedian($ageValues);
+                            $p65plus = $this->countRangeInList($ageValues, 65, 120); // assuming a max age of 120
+                            $p15_64 = $this->countRangeInList($ageValues, 15, 64);
+
+                            $value = $p15_64 == 0 ? 0 : $p65plus / $p15_64;
+
                             $now = now();
 
                             $resultsToInsert[] = [
-                                'name' => 'median_age',
-                                'value' => $medianAge,
+                                'name' => 'aged_dependency_ratio',
+                                'value' => $value,
                                 'date_of_dataset' => $this->dateOfDataset,
                                 'reference_geometry' => $this->referenceGeometry,
                                 'geometry' => $feature->geometry,
@@ -75,16 +82,16 @@ class CalculateMedianAge implements ShouldQueue
                                 'updated_at' => $now,
                             ];
                         }
-                        Log::info('Median  calculation completed successfully.');
+                        Log::info('Aged Dependency Ratio calculation completed successfully.');
 
-                    } catch (\Exception $e) {
-                        Log::error("Error processing feature {$feature->id}: {$e->getMessage()}");
+                    } catch (Exception $e) {
+                        Log::error("Error processing feature $feature->id: {$e->getMessage()}");
                     }
                 }
 
                 // Insert the calculated results into the database using a transaction
                 DB::transaction(function () use ($resultsToInsert) {
-                    MedianAge::insert($resultsToInsert);
+                    AgedDependencyRatio::insert($resultsToInsert);
                 });
             });
     }
@@ -101,21 +108,11 @@ class CalculateMedianAge implements ShouldQueue
         return date('Y', strtotime($datasetDate)) - $yearOfBirth;
     }
 
-    /**
-     * Calculate the median from a list of numbers.
-     *
-     * @param array $numbers The list of numbers.
-     * @return float The median value.
-     */
-    private function calculateMedian(array $numbers): float
+    protected function countRangeInList($list, $min, $max): int
     {
-        sort($numbers);
-        $count = count($numbers);
-        if ($count % 2 === 0) {
-            return ($numbers[$count / 2 - 1] + $numbers[$count / 2]) / 2;
-        }
-
-        return $numbers[($count - 1) / 2];
+        return count(array_filter($list, function ($value) use ($min, $max) {
+            return $min <= $value && $value <= $max;
+        }));
     }
 }
 
