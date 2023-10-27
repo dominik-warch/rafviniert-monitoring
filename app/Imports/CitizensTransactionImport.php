@@ -7,8 +7,6 @@ use Carbon\Carbon;
 use Clickbar\Magellan\Data\Geometries\Point;
 use DateTime;
 use Exception;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -23,14 +21,19 @@ class CitizensTransactionImport implements ToModel, WithChunkReading, WithHeadin
     protected array $columnMapping;
     protected $dataset_date;
     protected $transaction_type;
-    protected Client $httpClient;
 
-    public function __construct(array $columnMapping, $dataset_date, $transaction_type)
+    public function __construct(
+        array $columnMapping,
+        $dataset_date,
+        $transaction_type,
+        $localGeocodingService,
+        $externalGeocodingService)
     {
         $this->columnMapping = $columnMapping;
         $this->dataset_date = $dataset_date;
         $this->transaction_type = $transaction_type;
-        $this->httpClient = new Client();
+        $this->localGeocodingService = $localGeocodingService;
+        $this->externalGeocodingService = $externalGeocodingService;
     }
 
     /**
@@ -56,9 +59,7 @@ class CitizensTransactionImport implements ToModel, WithChunkReading, WithHeadin
             $row[$this->columnMapping["housenumber"]],
             $row[$this->columnMapping["housenumber_extra"]]
         );
-        Log::info(array_keys($row));
-        Log::info($this->transaction_type);
-        Log::info($row[$this->columnMapping["transaction_type"]]);
+
         $transactionType = (isset($this->transaction_type)) ? $this->transaction_type : $row[$this->columnMapping["transaction_type"]];
         $transactionDate = $this->parseTransactionDate($row[$this->columnMapping["transaction_date"]]);
         $gender = $this->parseGender($row[$this->columnMapping["gender"]]);
@@ -145,35 +146,19 @@ class CitizensTransactionImport implements ToModel, WithChunkReading, WithHeadin
 
     protected function geocodeAddress($zipCode, $city, $street, $houseNumber, $houseNumberExtra)
     {
-        // Implement the logic to geocode the address
-        $address = urlencode("$street $houseNumber $houseNumberExtra, $city, $zipCode");
-        $url = "https://nominatim.rafviniert.de/search?q=$address";
-        $maxRetries = 3;
-        $retryDelay = 200000; // 200 milliseconds
-
-        for ($i = 0; $i < $maxRetries; $i++) {
-            try {
-                $response = $this->httpClient->get($url);
-                $body = $response->getBody();
-                $data = json_decode($body, true);
-
-                if (isset($data[0]["lat"])) {
-                    Log::info("Successful geocode address: " . $address);
-                    return $data[0];
-                } else {
-                    Log::warning("Failed to geocode address: " . $address);
-                }
-
-            } catch (RequestException $e) {
-                Log::warning("Attempt " . ($i+1) . ": " . $e->getMessage());
-                if ($e->getResponse() && $e->getResponse()->getStatusCode() == 429 && $i < $maxRetries - 1) {
-                    usleep($retryDelay); // Wait before retrying if rate limited
-                }
-            }
+        $localResult = $this->localGeocodingService->geocode($zipCode, $city, $street, $houseNumber, $houseNumberExtra);
+        if ($localResult !== null) {
+            Log::info("Address geocoded locally");
+            return $localResult;
         }
 
-        // After all retries failed, return default coordinates
-        Log::error("All geocoding attempts failed for address: $address");
+        $externalResult = $this->externalGeocodingService->geocode($zipCode, $city, $street, $houseNumber, $houseNumberExtra);
+        if ($externalResult !== null) {
+            Log::info("Address geocoded externally");
+            return $externalResult;
+        }
+
+        Log::warning("Geocoding failed for address: $street $houseNumber $houseNumberExtra, $city, $zipCode");
         return ["lat" => 0, "lon" => 0];
     }
 

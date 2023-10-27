@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use App\Imports\CitizensTransactionImport;
 use App\Models\ImportTransaction;
+use App\Services\ExternalGeocodingService;
+use App\Services\LocalGeocodingService;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Log;
@@ -34,8 +36,17 @@ class ImportCitizenTransactionData implements ShouldQueue
      */
     public function handle(): void
     {
+        $localGeocodingService = new LocalGeocodingService();
+        $externalGeocodingService = new ExternalGeocodingService();
+
         try {
-            $import = new CitizensTransactionImport($this->upload->column_mapping, $this->upload->dataset_date, $this->upload->transaction_type);
+            $import = new CitizensTransactionImport(
+                $this->upload->column_mapping,
+                $this->upload->dataset_date,
+                $this->upload->transaction_type,
+                $localGeocodingService,
+                $externalGeocodingService
+            );
 
             // Import the data from the uploaded file
             Excel::import($import, $this->upload->file_path);

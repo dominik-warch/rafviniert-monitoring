@@ -4,6 +4,8 @@ namespace App\Jobs;
 
 use App\Imports\CitizensMasterImport;
 use App\Models\Import;
+use App\Services\ExternalGeocodingService;
+use App\Services\LocalGeocodingService;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Log;
@@ -14,7 +16,7 @@ use Illuminate\Queue\SerializesModels;
 use Maatwebsite\Excel\Facades\Excel;
 
 
-class ProcessImportJob implements ShouldQueue
+class ImportCitizenMasterData implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -34,9 +36,17 @@ class ProcessImportJob implements ShouldQueue
      */
     public function handle(): void
     {
+        $localGeocodingService = new LocalGeocodingService();
+        $externalGeocodingService = new ExternalGeocodingService();
+
         try {
             Log::info("Starting the import");
-            $import = new CitizensMasterImport($this->upload->column_mapping, $this->upload->dataset_date);
+            $import = new CitizensMasterImport(
+                $this->upload->column_mapping,
+                $this->upload->dataset_date,
+                $localGeocodingService,
+                $externalGeocodingService
+            );
 
             // Import the data from the uploaded file
             Excel::import($import, $this->upload->file_path);

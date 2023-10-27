@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Jobs\ProcessImportJob;
+use App\Jobs\ImportCitizenMasterData;
 use App\Models\Import;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -53,7 +53,7 @@ class ImportCitizensMasterController extends Controller
         ]);
 
         // Dispatch the job to process the upload
-        ProcessImportJob::dispatch($upload);
+        ImportCitizenMasterData::dispatch($upload);
         Log::info("Dispatched job: Import of citizen master data");
 
         // Redirect to a success page

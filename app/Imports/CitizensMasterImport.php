@@ -4,8 +4,7 @@ namespace App\Imports;
 
 use App\Models\CitizensMaster;
 use Clickbar\Magellan\Data\Geometries\Point;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
+use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -19,13 +18,17 @@ class CitizensMasterImport implements ToModel, WithChunkReading, WithHeadingRow,
 {
     protected array $columnMapping;
     protected $dataset_date;
-    protected Client $httpClient;
 
-    public function __construct(array $columnMapping, $dataset_date)
+    public function __construct(
+        array $columnMapping,
+        $dataset_date,
+        $localGeocodingService,
+        $externalGeocodingService)
     {
         $this->columnMapping = $columnMapping;
         $this->dataset_date = $dataset_date;
-        $this->httpClient = new Client();
+        $this->localGeocodingService = $localGeocodingService;
+        $this->externalGeocodingService = $externalGeocodingService;
     }
 
     /**
@@ -106,41 +109,25 @@ class CitizensMasterImport implements ToModel, WithChunkReading, WithHeadingRow,
             return intval($rawDate); // Return if it's already a year
         }
 
-        $date = new \DateTime($rawDate);
+        $date = new DateTime($rawDate);
         return (int) $date->format('Y'); // Extract year from the date
     }
 
     protected function geocodeAddress($zipCode, $city, $street, $houseNumber, $houseNumberExtra)
     {
-        // Implement the logic to geocode the address
-        $address = urlencode("$street $houseNumber $houseNumberExtra, $city, $zipCode");
-        $url = "https://nominatim.rafviniert.de/search?q=$address";
-        $maxRetries = 3;
-        $retryDelay = 200000; // 200 milliseconds
-
-        for ($i = 0; $i < $maxRetries; $i++) {
-            try {
-                $response = $this->httpClient->get($url);
-                $body = $response->getBody();
-                $data = json_decode($body, true);
-
-                if (isset($data[0]["lat"])) {
-                    Log::info("Successful geocode address: " . $address);
-                    return $data[0];
-                } else {
-                    Log::warning("Failed to geocode address: " . $address);
-                }
-
-            } catch (RequestException $e) {
-                Log::warning("Attempt " . ($i+1) . ": " . $e->getMessage());
-                if ($e->getResponse() && $e->getResponse()->getStatusCode() == 429 && $i < $maxRetries - 1) {
-                    usleep($retryDelay); // Wait before retrying if rate limited
-                }
-            }
+        $localResult = $this->localGeocodingService->geocode($zipCode, $city, $street, $houseNumber, $houseNumberExtra);
+        if ($localResult !== null) {
+            Log::info("Address geocoded locally");
+            return $localResult;
         }
 
-        // After all retries failed, return default coordinates
-        Log::error("All geocoding attempts failed for address: $address");
+        $externalResult = $this->externalGeocodingService->geocode($zipCode, $city, $street, $houseNumber, $houseNumberExtra);
+        if ($externalResult !== null) {
+            Log::info("Address geocoded externally");
+            return $externalResult;
+        }
+
+        Log::warning("Geocoding failed for address: $street $houseNumber $houseNumberExtra, $city, $zipCode");
         return ["lat" => 0, "lon" => 0];
     }
 
