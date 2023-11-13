@@ -5,7 +5,6 @@ namespace App\Imports;
 use App\Models\CitizensTransaction;
 use Carbon\Carbon;
 use Clickbar\Magellan\Data\Geometries\Point;
-use DateTime;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
@@ -19,8 +18,8 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 class CitizensTransactionImport implements ToModel, WithChunkReading, WithHeadingRow, WithCustomCsvSettings
 {
     protected array $columnMapping;
-    protected $dataset_date;
-    protected $transaction_type;
+    protected string $dataset_date;
+    protected string $transaction_type;
 
     public function __construct(
         array $columnMapping,
@@ -92,12 +91,16 @@ class CitizensTransactionImport implements ToModel, WithChunkReading, WithHeadin
         ];
     }
 
-    protected function parseTransactionDate(string $rawDate)
+    /**
+     * @throws Exception
+     */
+    protected function parseTransactionDate(string $rawDate): Carbon
     {
         try {
             return Carbon::parse($rawDate);
         } catch (Exception $e) {
             Log::error("Could not parse the date: " . $e->getMessage());
+            throw $e;
         }
     }
 
@@ -130,18 +133,19 @@ class CitizensTransactionImport implements ToModel, WithChunkReading, WithHeadin
     protected function parseYearOfBirth($rawDate): int
     {
         if (is_numeric($rawDate)) {
-            return intval($rawDate); // Return if it's already a year
+            // Directly a year
+            return intval($rawDate);
+        } else {
+            // Try to parse as date
+            try {
+                $date = Carbon::createFromFormat('d.m.Y', $rawDate);
+                return (int)$date->format('Y');
+            } catch (Exception $e) {
+                // Handle the exception if the date format is invalid
+                Log::error("Could not parse the year of birth: " . $e->getMessage());
+                throw $e;
+            }
         }
-
-        try {
-            $date = Carbon::parse($rawDate);
-            return (int) $date->format('Y');
-        } catch (Exception $e) {
-            Log::error("Could not parse the date: " . $e->getMessage());
-        }
-
-        $date = new DateTime($rawDate);
-        return (int) $date->format('Y'); // Extract year from the date
     }
 
     protected function geocodeAddress($zipCode, $city, $street, $houseNumber, $houseNumberExtra)

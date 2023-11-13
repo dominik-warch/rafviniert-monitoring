@@ -3,8 +3,9 @@
 namespace App\Imports;
 
 use App\Models\CitizensMaster;
+use Carbon\Carbon;
 use Clickbar\Magellan\Data\Geometries\Point;
-use DateTime;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -17,7 +18,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 class CitizensMasterImport implements ToModel, WithChunkReading, WithHeadingRow, WithCustomCsvSettings
 {
     protected array $columnMapping;
-    protected $dataset_date;
+    protected string $dataset_date;
 
     public function __construct(
         array $columnMapping,
@@ -32,10 +33,11 @@ class CitizensMasterImport implements ToModel, WithChunkReading, WithHeadingRow,
     }
 
     /**
-    * @param array $row
-    *
-    * @return Model|null
-    */
+     * @param array $row
+     *
+     * @return Model|null
+     * @throws Exception
+     */
     public function model(array $row): ?CitizensMaster
     {
         // Validate the row first
@@ -103,14 +105,25 @@ class CitizensMasterImport implements ToModel, WithChunkReading, WithHeadingRow,
         return $genderMap[$normalizedGender] ?? "d"; // Default to 'd' if unknown gender
     }
 
+    /**
+     * @throws Exception
+     */
     protected function parseYearOfBirth($rawDate): int
     {
         if (is_numeric($rawDate)) {
-            return intval($rawDate); // Return if it's already a year
+            // Directly a year
+            return intval($rawDate);
+        } else {
+            // Try to parse as date
+            try {
+                $date = Carbon::createFromFormat('d.m.Y', $rawDate);
+                return (int)$date->format('Y');
+            } catch (Exception $e) {
+                // Handle the exception if the date format is invalid
+                Log::error("Could not parse the year of birth: " . $e->getMessage());
+                throw $e;
+            }
         }
-
-        $date = new DateTime($rawDate);
-        return (int) $date->format('Y'); // Extract year from the date
     }
 
     protected function geocodeAddress($zipCode, $city, $street, $houseNumber, $houseNumberExtra)
@@ -135,7 +148,7 @@ class CitizensMasterImport implements ToModel, WithChunkReading, WithHeadingRow,
     {
         $validationRules = [
             $this->columnMapping["gender"] => 'required|string',
-            $this->columnMapping["year_of_birth"] => 'required|numeric|between:1900,' . date("Y"),
+            $this->columnMapping["year_of_birth"] => 'required',
             $this->columnMapping["zip_code"] => 'required|alpha_num',
             $this->columnMapping["city"] => 'required|string|max:255',
             $this->columnMapping["street"] => 'required|string|max:255',

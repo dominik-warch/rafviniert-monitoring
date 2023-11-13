@@ -8,7 +8,7 @@
                 'Straße' => 'street',
                 'Hausnummer' => 'housenumber',
                 'Hausnummer-Zusatz' => 'housenumber_extra',
-                'Geburtsjahr' => 'year_of_birth',
+                'Geburtsjahr/Geburtsdatum' => 'year_of_birth',
                 'Geschlecht' => 'gender'
             ];
         @endphp
