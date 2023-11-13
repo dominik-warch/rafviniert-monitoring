@@ -47,6 +47,9 @@
                                         <x-nav-link href="{{ route('import.reference-geometries.create') }}" :active="request()->routeIs('import.reference-geometries.create')" class="block">Import Referenzgeometrien</x-nav-link>
                                     </li>
                                     <li>
+                                        <x-nav-link href="{{ route('import.addresses.create') }}" :active="request()->routeIs('import.addresses.create')" class="block">Import Adressen</x-nav-link>
+                                    </li>
+                                    <li>
                                         <x-nav-link href="{{ route('calculations.show-calculations') }}" :active="request()->routeIs('calculations.show-calculation')" class="block">Indikatorenberechnung</x-nav-link>
                                     </li>
                                 </ul>
