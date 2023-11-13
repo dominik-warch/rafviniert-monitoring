@@ -38,12 +38,14 @@ class ImportCitizenMasterData implements ShouldQueue
     {
         $localGeocodingService = new LocalGeocodingService();
         $externalGeocodingService = new ExternalGeocodingService();
+        $fileExtension = pathinfo($this->upload->file_path, PATHINFO_EXTENSION);
 
         try {
             Log::info("Starting the import");
             $import = new CitizensMasterImport(
                 $this->upload->column_mapping,
                 $this->upload->dataset_date,
+                $fileExtension,
                 $localGeocodingService,
                 $externalGeocodingService
             );
