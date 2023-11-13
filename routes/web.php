@@ -2,9 +2,10 @@
 
 use App\Http\Controllers\CalculationController;
 use App\Http\Controllers\ImportCitizensTransactionController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ImportReferenceGeometriesController;
 use App\Http\Controllers\ImportCitizensMasterController;
 use App\Http\Controllers\ImportAddressesController;
+use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 /*
 |--------------------------------------------------------------------------
@@ -34,8 +35,8 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/import/citizens_transaction/mapping', [ImportCitizensTransactionController::class, 'mapping'])->name('import.citizens-transaction.mapping.create');
     Route::post('/import/citizens_transaction/mapping', [ImportCitizensTransactionController::class, 'storeMapping'])->name('import.citizens-transaction.mapping.store');
 
-    Route::get('/import/reference_geometries', [ImportAddressesController::class, 'create'])->name('import.reference-geometries.create');
-    Route::post('/import/reference_geometries', [ImportAddressesController::class, 'store'])->name('import.reference-geometries.store');
+    Route::get('/import/reference_geometries', [ImportReferenceGeometriesController::class, 'create'])->name('import.reference-geometries.create');
+    Route::post('/import/reference_geometries', [ImportReferenceGeometriesController::class, 'store'])->name('import.reference-geometries.store');
 
     Route::get('/import/addresses', [ImportAddressesController::class, 'create'])->name('import.addresses.create');
     Route::post('/import/addresses', [ImportAddressesController::class, 'store'])->name('import.addresses.store');
