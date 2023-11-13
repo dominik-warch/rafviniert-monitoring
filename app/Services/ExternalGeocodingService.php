@@ -7,8 +7,12 @@ use Throwable;
 
 class ExternalGeocodingService
 {
-    // Todo: Change base URL to be configurable in the .env
-    protected string $baseUrl = "https://nominatim.rafviniert.de";
+    protected string $baseUrl;
+
+    public function __construct()
+    {
+        $this->baseUrl = config("services.geocoding.base_url", "https://nominatim.rafviniert.de");
+    }
 
     public function geocode($zipCode, $city, $street, $houseNumber, $houseNumberExtra)
     {
