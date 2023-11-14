@@ -5,9 +5,10 @@ namespace App\Http\Controllers;
 use App\Jobs\CalculateAgedDependencyRatio;
 use App\Jobs\CalculateChildDependencyRatio;
 use App\Jobs\CalculateGreyingIndex;
+use App\Jobs\CalculateMedianAge;
 use App\Jobs\CalculateTotalDependencyRatio;
 use Illuminate\Http\Request;
-use App\Jobs\CalculateMedianAge;
+use App\Jobs\CalculateRemanenceBuilding;
 use App\Jobs\CalculateMeanAge;
 use App\Models\ReferenceGeometry;
 use App\Models\CitizensMaster;
@@ -49,6 +50,9 @@ class CalculationController extends Controller
                 break;
             case "total_dependency_ratio":
                 CalculateTotalDependencyRatio::dispatch($referenceGeometry, $dateOfDataset);
+                break;
+            case "remanence_building":
+                CalculateRemanenceBuilding::dispatch($referenceGeometry, $dateOfDataset);
                 break;
             default:
                 return redirect()->back()->withErrors(["Unknown calculation type"]);
