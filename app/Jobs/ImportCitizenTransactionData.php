@@ -38,12 +38,14 @@ class ImportCitizenTransactionData implements ShouldQueue
     {
         $localGeocodingService = new LocalGeocodingService();
         $externalGeocodingService = new ExternalGeocodingService();
+        $fileExtension = pathinfo($this->upload->file_path, PATHINFO_EXTENSION);
 
         try {
             $import = new CitizensTransactionImport(
                 $this->upload->column_mapping,
                 $this->upload->dataset_date,
                 $this->upload->transaction_type,
+                $fileExtension,
                 $localGeocodingService,
                 $externalGeocodingService
             );

@@ -3,6 +3,7 @@
 namespace App\Imports;
 
 use App\Models\CitizensTransaction;
+use App\Services\DataParsingService;
 use Carbon\Carbon;
 use Clickbar\Magellan\Data\Geometries\Point;
 use Exception;
@@ -23,13 +24,15 @@ class CitizensTransactionImport implements ToModel, WithChunkReading, WithHeadin
 
     public function __construct(
         array $columnMapping,
-        $dataset_date,
+        string $dataset_date,
+        string $fileExtension,
         $transaction_type,
         $localGeocodingService,
         $externalGeocodingService)
     {
         $this->columnMapping = $columnMapping;
         $this->dataset_date = $dataset_date;
+        $this->fileExtension = $fileExtension;
         $this->transaction_type = $transaction_type;
         $this->localGeocodingService = $localGeocodingService;
         $this->externalGeocodingService = $externalGeocodingService;
@@ -132,20 +135,8 @@ class CitizensTransactionImport implements ToModel, WithChunkReading, WithHeadin
      */
     protected function parseYearOfBirth($rawDate): int
     {
-        if (is_numeric($rawDate)) {
-            // Directly a year
-            return intval($rawDate);
-        } else {
-            // Try to parse as date
-            try {
-                $date = Carbon::createFromFormat('d.m.Y', $rawDate);
-                return (int)$date->format('Y');
-            } catch (Exception $e) {
-                // Handle the exception if the date format is invalid
-                Log::error("Could not parse the year of birth: " . $e->getMessage());
-                throw $e;
-            }
-        }
+        $dateParsingService = new DataParsingService();
+        return $dateParsingService->parseYearOfBirth($rawDate, $this->fileExtension);
     }
 
     protected function geocodeAddress($zipCode, $city, $street, $houseNumber, $houseNumberExtra)
