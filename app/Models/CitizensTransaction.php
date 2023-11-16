@@ -16,7 +16,7 @@ class CitizensTransaction extends Model
         ],
     ];
 
-    protected $table = 'citizen_transaction';
+    protected $table = 'citizens_transaction';
 
     protected $fillable = [
         'transaction_type',
