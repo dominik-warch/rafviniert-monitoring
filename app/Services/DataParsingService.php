@@ -11,9 +11,11 @@ class DataParsingService
     public function parseYearOfBirth($rawDate, $fileExtension): ?int
     {
         try {
-            if ($fileExtension === "csv") {
+            if (in_array($fileExtension, ["csv", "txt"])) {
                 if (is_numeric($rawDate)) {
                     return intval($rawDate);
+                } else if (is_string($rawDate) and strlen($rawDate) == 4) {
+                    return (int) $rawDate;
                 }
 
                 $date = Carbon::createFromFormat("d.m.Y", $rawDate);
@@ -30,7 +32,7 @@ class DataParsingService
         }
 
         // Handle the case where the date couldn't be parsed
-        Log::warning("Could not parse year of birth for raw date '{$rawDate}' with file extension '{$fileExtension}'");
+        Log::warning("Could not parse year of birth for raw date '$rawDate' with file extension '$fileExtension'");
         return null; // Or return a default value like current year or a sentinel value like 0
     }
 }
