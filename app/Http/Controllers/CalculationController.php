@@ -6,6 +6,8 @@ use App\Jobs\CalculateAgedDependencyRatio;
 use App\Jobs\CalculateChildDependencyRatio;
 use App\Jobs\CalculateGreyingIndex;
 use App\Jobs\CalculateMedianAge;
+use App\Jobs\CalculateQualifyingResidentsAgeGroup;
+use App\Jobs\CalculateQualifyingResidentsGender;
 use App\Jobs\CalculateTotalDependencyRatio;
 use Illuminate\Http\Request;
 use App\Jobs\CalculateRemanenceBuilding;
@@ -53,6 +55,12 @@ class CalculationController extends Controller
                 break;
             case "remanence_building":
                 CalculateRemanenceBuilding::dispatch($referenceGeometry, $dateOfDataset);
+                break;
+            case "qualifying_residents_age_group":
+                CalculateQualifyingResidentsAgeGroup::dispatch($referenceGeometry, $dateOfDataset);
+                break;
+            case "qualifying_residents_gender":
+                CalculateQualifyingResidentsGender::dispatch($referenceGeometry, $dateOfDataset);
                 break;
             default:
                 return redirect()->back()->withErrors(["Unknown calculation type"]);

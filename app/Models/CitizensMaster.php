@@ -5,6 +5,10 @@ namespace App\Models;
 use Clickbar\Magellan\Database\Eloquent\HasPostgisColumns;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method static distinct(string $string)
+ * @method static where(string $string, string $dateOfDataset)
+ */
 class CitizensMaster extends Model
 {
     use HasPostgisColumns;

@@ -103,6 +103,14 @@
             <button type="submit" name="calculation_type" value="remanence_building" class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                 Remanzengebäude berechnen
             </button>
+
+            <button type="submit" name="calculation_type" value="qualifying_residents_age_group" class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                Wohnberechtigte Einwohner (Altersgruppe) berechnen
+            </button>
+
+            <button type="submit" name="calculation_type" value="qualifying_residents_gender" class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                Wohnberechtigte Einwohner (Geschlecht) berechnen
+            </button>
         </div>
     </form>
 </x-app-layout>
