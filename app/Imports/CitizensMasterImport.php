@@ -4,7 +4,6 @@ namespace App\Imports;
 
 use App\Models\CitizensMaster;
 use App\Services\DataParsingService;
-use Carbon\Carbon;
 use Clickbar\Magellan\Data\Geometries\Point;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
@@ -20,6 +19,9 @@ class CitizensMasterImport implements ToModel, WithChunkReading, WithHeadingRow,
 {
     protected array $columnMapping;
     protected string $dataset_date;
+    protected string $fileExtension;
+    protected mixed $localGeocodingService;
+    protected mixed $externalGeocodingService;
 
     public function __construct(
         array $columnMapping,

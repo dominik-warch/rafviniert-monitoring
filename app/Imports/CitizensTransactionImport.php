@@ -6,6 +6,7 @@ use App\Models\CitizensTransaction;
 use App\Services\DataParsingService;
 use Carbon\Carbon;
 use Clickbar\Magellan\Data\Geometries\Point;
+use DateTime;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
@@ -21,19 +22,22 @@ class CitizensTransactionImport implements ToModel, WithChunkReading, WithHeadin
     protected array $columnMapping;
     protected string $dataset_date;
     protected string $transaction_type;
+    protected string $fileExtension;
+    protected mixed $localGeocodingService;
+    protected mixed $externalGeocodingService;
 
     public function __construct(
         array $columnMapping,
         string $dataset_date,
+        string $transaction_type,
         string $fileExtension,
-        $transaction_type,
         $localGeocodingService,
         $externalGeocodingService)
     {
         $this->columnMapping = $columnMapping;
         $this->dataset_date = $dataset_date;
-        $this->fileExtension = $fileExtension;
         $this->transaction_type = $transaction_type;
+        $this->fileExtension = $fileExtension;
         $this->localGeocodingService = $localGeocodingService;
         $this->externalGeocodingService = $externalGeocodingService;
     }
@@ -97,14 +101,10 @@ class CitizensTransactionImport implements ToModel, WithChunkReading, WithHeadin
     /**
      * @throws Exception
      */
-    protected function parseTransactionDate(string $rawDate): Carbon
+    protected function parseTransactionDate(string $rawDate): Carbon|DateTime|false|null
     {
-        try {
-            return Carbon::parse($rawDate);
-        } catch (Exception $e) {
-            Log::error("Could not parse the date: " . $e->getMessage());
-            throw $e;
-        }
+        $dateParsingService = new DataParsingService();
+        return $dateParsingService->parseDate($rawDate, $this->fileExtension);
     }
 
     protected function parseGender(string $rawGender): string

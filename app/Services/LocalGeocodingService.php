@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Models\Address;
+use Exception;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -17,9 +18,9 @@ class LocalGeocodingService
      * @param string $street The street name of the address.
      * @param string $houseNumber The house number of the address.
      * @param string|null $houseNumberExtra Any additional information for the house number.
-     * @return array Returns a Point geometry if found, null otherwise.
+     * @return array|null Returns a Point geometry if found, null otherwise.
      */
-    public function geocode(string $zipCode, string $city, string $street, string $houseNumber, ?string $houseNumberExtra)
+    public function geocode(string $zipCode, string $city, string $street, string $houseNumber, ?string $houseNumberExtra): ?array
     {
         $searchAddress = strtolower("$street $houseNumber" . ($houseNumberExtra ? " $houseNumberExtra" : "") . ", $zipCode, $city");
 
@@ -41,7 +42,7 @@ class LocalGeocodingService
             Log::debug("No local match found for address: " . $searchAddress);
             return null;
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error("Failed to geocode local address: " . $searchAddress, ['exception' => $e]);
             return null;
         }
