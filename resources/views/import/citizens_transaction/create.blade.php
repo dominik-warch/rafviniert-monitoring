@@ -22,7 +22,7 @@
                             <input class="max-w-2xl w-full rounded-lg border-gray-900/25" type="date" name="dataset_date" id="dataset_date">
                         </div>
                     </div>
-                    
+
                     <fieldset>
                         <div class="sm:grid sm:grid-cols-3 sm:items-baseline sm:gap-4 sm:py-6">
                             <div class="text-sm font-semibold leading-6 text-gray-900">Struktur der Bewegungsdaten</div>
