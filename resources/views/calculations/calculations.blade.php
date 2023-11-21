@@ -42,6 +42,25 @@
                             <option value="{{ $date }}">{{ $date }}</option>
                         @endforeach
                     </select>
+
+                    <label
+                        for="calculation_type"
+                        class="block text-sm font-medium leading-6 text-gray-900"
+                    >Indikator</label>
+                    <select
+                        name="calculation_type" required
+                        class="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    >
+                        <option value="median">Medianalter</option>
+                        <option value="mean">Durchschnittsalter</option>
+                        <option value="greying_index">Greying-Index</option>
+                        <option value="child_dependency_ratio">Jugendquotient</option>
+                        <option value="aged_dependency_ratio">Altenquotient</option>
+                        <option value="total_dependency_ratio">Abhängigenquotient</option>
+                        <option value="remanence_building">Remanenzgebäude</option>
+                        <option value="qualifying_residents_age_group">Wohnberechtigte Einwohner (Altersgruppe)</option>
+                        <option value="qualifying_residents_gender">Wohnberechtigte Einwohner (Geschlecht)</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -76,40 +95,8 @@
         @endif
 
         <div class="mt-6 flex items-center justify-end gap-x-6">
-            <button type="submit" name="calculation_type" value="median" class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                Medianalter berechnen
-            </button>
-
-            <button type="submit" name="calculation_type" value="mean" class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                Durchschnittsalter berechnen
-            </button>
-
-            <button type="submit" name="calculation_type" value="greying_index" class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                Greying-Index berechnen
-            </button>
-
-            <button type="submit" name="calculation_type" value="child_dependency_ratio" class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                Jugendquotient berechnen
-            </button>
-
-            <button type="submit" name="calculation_type" value="aged_dependency_ratio" class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                Altenquotient berechnen
-            </button>
-
-            <button type="submit" name="calculation_type" value="total_dependency_ratio" class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                Abhängigenquotient berechnen
-            </button>
-
-            <button type="submit" name="calculation_type" value="remanence_building" class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                Remanzengebäude berechnen
-            </button>
-
-            <button type="submit" name="calculation_type" value="qualifying_residents_age_group" class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                Wohnberechtigte Einwohner (Altersgruppe) berechnen
-            </button>
-
-            <button type="submit" name="calculation_type" value="qualifying_residents_gender" class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                Wohnberechtigte Einwohner (Geschlecht) berechnen
+            <button type="submit" class="inline-flex justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                Indikator berechnen
             </button>
         </div>
     </form>

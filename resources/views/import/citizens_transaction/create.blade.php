@@ -22,25 +22,63 @@
                             <input class="max-w-2xl w-full rounded-lg border-gray-900/25" type="date" name="dataset_date" id="dataset_date">
                         </div>
                     </div>
-
-                    <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
-                        <label>
-                            <input type="radio" name="fileType" value="single" checked onchange="toggleTransactionTypeDropdown()"> Eine Tabelle für alle Vorgangsarten
-                        </label>
-                        <label>
-                            <input type="radio" name="fileType" value="multiple" onchange="toggleTransactionTypeDropdown()"> Mehrere Tabellen
-                        </label>
-                    </div>
+                    
+                    <fieldset>
+                        <div class="sm:grid sm:grid-cols-3 sm:items-baseline sm:gap-4 sm:py-6">
+                            <div class="text-sm font-semibold leading-6 text-gray-900">Struktur der Bewegungsdaten</div>
+                            <div class="mt-1 sm:col-span-2 sm:mt-0">
+                                <div class="max-w-lg">
+                                    <div class="mt-2 space-y-6">
+                                        <div class="flex items-center gap-x-3">
+                                            <input
+                                                id="single_file"
+                                                name="fileType"
+                                                value="single"
+                                                type="radio"
+                                                checked
+                                                onchange="toggleTransactionTypeDropdown()"
+                                                class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                            <label
+                                                for="single_file"
+                                                class="block text-sm font-medium leading-6 text-gray-900">
+                                                Eine Tabelle für alle Vorgangsarten
+                                            </label>
+                                        </div>
+                                        <div class="flex items-center gap-x-3">
+                                            <input
+                                                id="multiple_files"
+                                                name="fileType"
+                                                value="multiple"
+                                                type="radio"
+                                                onchange="toggleTransactionTypeDropdown()"
+                                                class="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                            <label
+                                                for="multiple_files"
+                                                class="block text-sm font-medium leading-6 text-gray-900">
+                                                Separate Tabellen für jede Vorgangsart
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
 
                     <div id="transactionTypeDropdown" style="display:none;" class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
-                        <label>Wählen Sie die Art des Vorgangs aus:
-                            <select name="transaction_type_table">
-                                <option value="birth">Geburtsfälle</option>
-                                <option value="death">Sterbefälle</option>
-                                <option value="move_in">Hinzüge</option>
-                                <option value="move_out">Wegzüge</option>
-                            </select>
-                        </label>
+                        <label
+                            for="transaction_type_table"
+                            class="block text-sm font-medium leading-6 text-gray-900"
+                        >Wählen Sie die Art des Vorgangs aus:</label>
+                        <select
+                            id="transaction_type_table"
+                            name="transaction_type_table" required
+                            class="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        >
+                            <option value="birth">Geburtsfälle</option>
+                            <option value="death">Sterbefälle</option>
+                            <option value="move_in">Hinzüge</option>
+                            <option value="move_out">Wegzüge</option>
+                        </select>
                     </div>
 
                     <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
