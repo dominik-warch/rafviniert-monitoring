@@ -5,5 +5,5 @@
         </h2>
     </x-slot>
 
-    <p>Hello</p>
+    @livewire("contact-form")
 </x-app-layout>
