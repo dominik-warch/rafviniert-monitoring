@@ -1,66 +1,44 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# RAFVINIERT Monitoring
+## Introduction
+RAFVINIERT Monitoring is a part of a larger project aimed at improving the living conditions of seniors in rural areas by providing a platform for local authorities to upload and visualize data. The project focuses on developing architectures and implementation strategies for small-scale monitoring of areas facing supply shortages, especially affecting seniors. This project is being conducted at Hochschule Mainz and is funded by the Carl-Zeiss-Stiftung.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Our team at i3mainz, in collaboration with rural districts and communities, is developing tools and strategies for the supply and monitoring of these areas. This includes creating tools for small-scale monitoring within municipal geodata infrastructures and developing accessibility calculations for supply facilities with a focus on senior citizens.
 
-## About Laravel
+## Features
+* **Data Upload Capability:** Users can upload various data like Citizen Registration Records in CSV or Excel.
+* **Data Processing:** The platform automatically geocodes the uploaded data and calculates various demographic indicators like median age, total dependency ratio, or remanence buildings.
+* **Data Visualization:** Users can visualize these indicators on an interactive web map, providing a clear and accessible overview of the data.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Technologies Used
+* Laravel & Laravel Livewire
+* Inertia & React
+* Deck.GL & MapLibre
+* pygeoapi
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requirements
+To run this application, you'll need:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+* Docker: For creating, deploying, and running applications using containers.
+* Docker Compose: For defining and running multi-container Docker applications.
 
-## Learning Laravel
+## Installation and Setup
+To set up the application:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. **Clone the Repository:** Use `git clone https://github.com/dominik-warch/rafviniert-monitoring.git` to clone the project to your local machine.
+2. **Environment Setup:** Rename `.env.example` to `.env.` Fill in the necessary environmental variables, especially those related to the database and other services.
+3. **Start the Application:** Use the command `docker compose up in the project's root directory to build and start the application.
+4. **Run Migrations:** Use the command `./vendor/bin/sail artisan migrate` in the project's root directory to migrate the database.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Deployment
+The deployment process mirrors the installation and setup. Ensure that your production environment is equipped with Docker and Docker Compose. For more advanced deployment strategies, consider container orchestration tools like Kubernetes or Docker Swarm.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Authors and Acknowledgements
+* **Main Author:** Dominik Warch
+* **Collaborators:** Mariyan Stamenov
+* **Institutional Support:** This project is a part of research at i3mainz and is financed by the Carl-Zeiss-Stiftung.
 
 ## License
+RAFVINIERT Monitoring is open-source software licensed under the MIT License.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Contact Information
+For queries or contributions, contact Dominik Warch at dominik.warch@hs-mainz.de.
