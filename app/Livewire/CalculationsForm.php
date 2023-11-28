@@ -17,7 +17,10 @@ use App\Models\ReferenceGeometry;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redirect;
 use Livewire\Component;
+use Masmerise\Toaster\Toaster;
 
 class CalculationsForm extends Component
 {
@@ -99,13 +102,15 @@ class CalculationsForm extends Component
                     CalculateQualifyingResidentsGender::dispatch($this->referenceGeometry, $this->dateOfDataset);
                     break;
                 default:
-                    return redirect()->back()->withErrors(["Unknown calculation type"]);
+                    Log::error('Unknown calculation type.');
+                    return Redirect::route('dashboard')->error("Oh, da hat etwas nicht funktioniert!");
             }
         } catch (Exception $e) {
-            session()->flash("error", "Failed to start calculation: " . $e->getMessage());
+            Log::error('Failed to start calculation: ' . $e->getMessage());
+            Toaster::error('Oh, da hat etwas nicht funktioniert!');
         }
 
-        session()->flash('message', 'Calculation started!');
+        Toaster::success('Berechnung angestoßen!');
     }
 
     public function render()

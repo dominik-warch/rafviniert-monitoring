@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\ImportCitizenMasterData;
 use App\Models\Import;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
@@ -57,6 +58,6 @@ class ImportCitizensMasterController extends Controller
         Log::info("Dispatched job: Import of citizen master data");
 
         // Redirect to a success page
-        return redirect()->route('import.citizens-master.create');
+        return Redirect::route('import.citizens-master.create')->info('Import angestoßen, das kann etwas dauern.');
     }
 }

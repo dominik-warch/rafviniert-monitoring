@@ -4,13 +4,13 @@ namespace App\Livewire;
 
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
+use Masmerise\Toaster\Toaster;
 
 class ContactForm extends Component
 {
     public string $name;
     public string $email;
     public string $content;
-    public string $success;
     protected array $rules = [
         "name" => "required",
         "email" => "required|email",
@@ -33,7 +33,7 @@ class ContactForm extends Component
             }
         );
 
-        $this->success = "Vielen Dank für Ihre Nachricht, wir werden uns in Kürze bei Ihnen melden!";
+        Toaster::success('Vielen Dank für Ihre Nachricht, wir werden uns in Kürze bei Ihnen melden!');
 
         $this->clearFields();
     }

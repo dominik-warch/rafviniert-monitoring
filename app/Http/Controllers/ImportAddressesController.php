@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Address;
 use Clickbar\Magellan\IO\Parser\Geojson\GeojsonParser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
 
@@ -40,6 +41,6 @@ class ImportAddressesController extends Controller
         }
 
         // Redirect to success page
-        return redirect()->route('import.addresses.create');
+        return Redirect::route('import.addresses.create')->success('Import erfolgreich abgeschlossen!');
     }
 }

@@ -69,6 +69,6 @@ class ImportCitizensTransactionController extends Controller
         Log::info("Dispatched job: Import of citizen transaction data");
 
         // Redirect to a success page
-        return redirect()->route('import.citizens-transaction.create');
+        return Redirect::route('import.citizens-transaction.create')->info('Import angestoßen, das kann etwas dauern.');
     }
 }

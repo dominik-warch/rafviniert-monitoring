@@ -34,6 +34,8 @@
             </div>
         </div>
 
+        <x-toaster-hub />
+
         @stack('modals')
 
         @livewireScriptConfig

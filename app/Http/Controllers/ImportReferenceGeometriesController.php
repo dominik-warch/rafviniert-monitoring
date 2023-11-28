@@ -48,6 +48,6 @@ class ImportReferenceGeometriesController extends Controller
         }
 
         // Redirect to success page
-        return redirect()->route('import.reference-geometries.create');
+        return Redirect::route('import.reference-geometries.create')->success('Import erfolgreich abgeschlossen!');
     }
 }

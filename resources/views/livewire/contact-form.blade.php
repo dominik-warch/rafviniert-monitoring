@@ -40,16 +40,5 @@
         <div class="mt-10">
             <button type="submit" class="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Absenden</button>
         </div>
-
-        @if ($success)
-            <div class="inline-flex w-full ml-3 overflow-hidden bg-white rounded-lg shadow-sm mt-8">
-                <div class="flex items-center justify-center w-12 bg-green-500">
-                </div>
-                <div class="px-3 py-2 text-left">
-                    <span class="font-semibold text-green-500">Vielen Dank!</span>
-                    <p class="mb-1 text-sm leading-none text-gray-500">{{ $success }}</p>
-                </div>
-            </div>
-        @endif
     </form>
 </div>
