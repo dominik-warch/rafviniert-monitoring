@@ -1,0 +1,91 @@
+version: "3.9"
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx.dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - pgsql
+      - php
+
+  pgsql:
+    image: "kartoza/postgis:15-3.3"
+    ports:
+      - "25436:5432"
+    env_file:
+      - ./src/.env
+    environment:
+      - ALLOW_IP_RANGE=0.0.0.0/0
+      - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster,pgrouting
+      - RUN_AS_ROOT=false
+      - PASSWORD_AUTHENTICATION=md5
+    volumes:
+      - "./pgsql:/var/lib/postgresql/data"
+
+  php:
+    build:
+      context: .
+      dockerfile: php.dockerfile
+    volumes:
+      - ./src:/var/www/html
+
+  queue_worker:
+    build:
+      context: .
+      dockerfile: php.dockerfile
+    command: php /var/www/html/artisan queue:work --timeout=30000
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - php
+
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
+    volumes:
+      - "./redis:/data"
+
+  pygeoapi:
+    image: "geopython/pygeoapi:0.15.0"
+    volumes:
+      - "./pygeoapi.config.dev.yml:/pygeoapi/local.config.yml"
+    env_file:
+      - ./src/.env
+    ports:
+      - "5011:80"
+    depends_on:
+      - pgsql
+    restart: always
+
+
+  composer:
+    build:
+      context: .
+      dockerfile: composer.dockerfile
+    volumes:
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+
+  npm:
+    image: "node:current-alpine"
+    volumes:
+      - ./src:/var/www/html
+    entrypoint: ["npm"]
+    working_dir: /var/www/html
+
+  artisan:
+    build:
+      context: .
+      dockerfile: php.dockerfile
+    volumes:
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+    depends_on:
+      - pgsql
+    entrypoint: ["php", "/var/www/html/artisan"]
