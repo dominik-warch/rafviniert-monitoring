@@ -1,0 +1,57 @@
+version: '3.9'
+services:
+    nginx:
+        build:
+            context: .
+            dockerfile: nginx.Dockerfile
+        ports:
+          - 80:80
+        volumes:
+          - public-volume:/var/www/html/public
+
+    php:
+        build:
+            context: .
+            dockerfile: php.Dockerfile
+        volumes:
+          - public-volume:/var/www/html/public
+          - .env:/var/www/html/.env
+
+    pgsql:
+        image: 'kartoza/postgis:15-3.3'
+        ports:
+            - '${FORWARD_DB_PORT:-5432}:5432'
+        environment:
+            # If you need to create multiple database you can add coma separated databases eg gis,data
+            - POSTGRES_DB=${DB_DATABASE}
+            - POSTGRES_USER=${DB_USERNAME}
+            - POSTGRES_PASS=${DB_PASSWORD:-secret}
+            - ALLOW_IP_RANGE=0.0.0.0/0
+            # Add extensions you need to be enabled by default in the DB. Default are the five specified below
+            - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster,pgrouting
+            - RUN_AS_ROOT=false
+            - PASSWORD_AUTHENTICATION=md5
+        volumes:
+            - 'sail-pgsql:/var/lib/postgresql/data'
+
+    redis:
+        image: 'redis:alpine'
+        ports:
+            - '${FORWARD_REDIS_PORT:-6379}:6379'
+        volumes:
+            - 'sail-redis:/data'
+
+    pygeoapi:
+        image: "geopython/pygeoapi:0.15.0"
+        volumes:
+            - "./pygeoapi.config.dev.yml:/pygeoapi/local.config.yml"
+        env_file:
+            - ".env"
+        ports:
+            - "5011:80"
+        restart: always
+
+volumes:
+    sail-pgsql:
+    sail-redis:
+    public-volume:
