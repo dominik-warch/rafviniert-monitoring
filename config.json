@@ -17,7 +17,7 @@
             {
                 "groupId": "Testgruppe",
                 "groupName": "Testgruppe",
-                "layerIds": ["test"]
+                "layerIds": ["remanence-building"]
             }
         ],
         "layers": {
@@ -99,17 +99,17 @@
                 },
                 "initialVisible": false
             },
-            "test": {
-                "id": "test",
-                "name": "test",
+            "remanence-building": {
+                "id": "remanence-building",
+                "name": "Remanenzgebaeude",
                 "type": "geojson",
-                "endpoint": "https://ogc-api.rafviniert.de/collections/mean-age/items?f=json&limit=2000",
+                "endpoint": "http://localhost:5011/collections/remancence-building/items?f=json&limit=20000",
                 "thresholds": {
                     "low": {
                         "threshold": 44,
                         "color": [
-                            23,
-                            255,
+                            251,
+                            69,
                             0,
                             150
                         ],

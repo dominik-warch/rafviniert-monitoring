@@ -11,6 +11,7 @@ use App\Jobs\CalculateQualifyingResidentsAgeGroup;
 use App\Jobs\CalculateQualifyingResidentsGender;
 use App\Jobs\CalculateRemanenceBuilding;
 use App\Jobs\CalculateTotalDependencyRatio;
+use App\Jobs\CalculateNetMigration;
 use App\Models\CitizensMaster;
 use App\Models\CitizensTransaction;
 use App\Models\ReferenceGeometry;
@@ -64,47 +65,67 @@ class CalculationsForm extends Component
             })->unique();
     }
 
+    private function getValidationRules(): array
+    {
+        $validationRules = [
+            'referenceGeometry' => 'required|exists:reference_geometries,name',
+            'calculationType' => 'required|in:median,mean,greying_index,child_dependency_ratio,aged_dependency_ratio,total_dependency_ratio,remanence_building,qualifying_residents_age_group,qualifying_residents_gender,net_migration',
+        ];
+
+        if (in_array($this->calculationType, ["median", "mean", "greying_index", "child_dependency_ratio", "aged_dependency_ratio", "total_dependency_ratio", "remanence_building", "qualifying_residents_age_group", "qualifying_residents_gender"])) {
+            $validationRules['dateOfDataset'] = 'required|date';
+        } elseif (in_array($this->calculationType, ["net_migration"])) {
+            $validationRules['transactionYear'] = 'required|integer';
+        }
+
+        return $validationRules;
+    }
+
+    private function dispatchCalculationJob()
+    {
+        switch ($this->calculationType) {
+            case "median":
+                CalculateMedianAge::dispatch($this->referenceGeometry, $this->dateOfDataset);
+                break;
+            case "mean":
+                CalculateMeanAge::dispatch($this->referenceGeometry, $this->dateOfDataset);
+                break;
+            case "greying_index":
+                CalculateGreyingIndex::dispatch($this->referenceGeometry, $this->dateOfDataset);
+                break;
+            case "child_dependency_ratio":
+                CalculateChildDependencyRatio::dispatch($this->referenceGeometry, $this->dateOfDataset);
+                break;
+            case "aged_dependency_ratio":
+                CalculateAgedDependencyRatio::dispatch($this->referenceGeometry, $this->dateOfDataset);
+                break;
+            case "total_dependency_ratio":
+                CalculateTotalDependencyRatio::dispatch($this->referenceGeometry, $this->dateOfDataset);
+                break;
+            case "remanence_building":
+                CalculateRemanenceBuilding::dispatch($this->referenceGeometry, $this->dateOfDataset);
+                break;
+            case "qualifying_residents_age_group":
+                CalculateQualifyingResidentsAgeGroup::dispatch($this->referenceGeometry, $this->dateOfDataset);
+                break;
+            case "qualifying_residents_gender":
+                CalculateQualifyingResidentsGender::dispatch($this->referenceGeometry, $this->dateOfDataset);
+                break;
+            case "net_migration":
+                CalculateNetMigration::dispatch($this->referenceGeometry, $this->transactionYear);
+                break;
+            default:
+                Log::error('Unknown calculation type.');
+                return Redirect::route('dashboard')->error("Oh, da hat etwas nicht funktioniert!");
+        }
+    }
+
     public function calculate()
     {
-        $this->validate([
-            'referenceGeometry' => 'required|exists:reference_geometries,name',
-            'dateOfDataset' => 'required|date',
-            'calculationType' => 'required|in:median,mean,greying_index,child_dependency_ratio,aged_dependency_ratio,total_dependency_ratio,remanence_building,qualifying_residents_age_group,qualifying_residents_gender',
-        ]);
+        $this->validate($this->getValidationRules());
 
         try {
-            switch ($this->calculationType) {
-                case "median":
-                    CalculateMedianAge::dispatch($this->referenceGeometry, $this->dateOfDataset);
-                    break;
-                case "mean":
-                    CalculateMeanAge::dispatch($this->referenceGeometry, $this->dateOfDataset);
-                    break;
-                case "greying_index":
-                    CalculateGreyingIndex::dispatch($this->referenceGeometry, $this->dateOfDataset);
-                    break;
-                case "child_dependency_ratio":
-                    CalculateChildDependencyRatio::dispatch($this->referenceGeometry, $this->dateOfDataset);
-                    break;
-                case "aged_dependency_ratio":
-                    CalculateAgedDependencyRatio::dispatch($this->referenceGeometry, $this->dateOfDataset);
-                    break;
-                case "total_dependency_ratio":
-                    CalculateTotalDependencyRatio::dispatch($this->referenceGeometry, $this->dateOfDataset);
-                    break;
-                case "remanence_building":
-                    CalculateRemanenceBuilding::dispatch($this->referenceGeometry, $this->dateOfDataset);
-                    break;
-                case "qualifying_residents_age_group":
-                    CalculateQualifyingResidentsAgeGroup::dispatch($this->referenceGeometry, $this->dateOfDataset);
-                    break;
-                case "qualifying_residents_gender":
-                    CalculateQualifyingResidentsGender::dispatch($this->referenceGeometry, $this->dateOfDataset);
-                    break;
-                default:
-                    Log::error('Unknown calculation type.');
-                    return Redirect::route('dashboard')->error("Oh, da hat etwas nicht funktioniert!");
-            }
+            $this->dispatchCalculationJob();
         } catch (Exception $e) {
             Log::error('Failed to start calculation: ' . $e->getMessage());
             Toaster::error('Oh, da hat etwas nicht funktioniert!');

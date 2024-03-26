@@ -7,6 +7,7 @@ use App\Models\ReferenceGeometry;
 use Clickbar\Magellan\Data\Geometries\MultiPolygon;
 use Clickbar\Magellan\Data\Geometries\Polygon;
 use Clickbar\Magellan\IO\Parser\Geojson\GeojsonParser;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
 

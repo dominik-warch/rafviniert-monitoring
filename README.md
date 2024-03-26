@@ -26,8 +26,8 @@ To set up the application:
 
 1. **Clone the Repository:** Use `git clone https://github.com/dominik-warch/rafviniert-monitoring.git` to clone the project to your local machine.
 2. **Environment Setup:** Rename `.env.example` to `.env.` Fill in the necessary environmental variables, especially those related to the database and other services.
-3. **Start the Application:** Use the command `docker compose up in the project's root directory to build and start the application.
-4. **Run Migrations:** Use the command `./vendor/bin/sail artisan migrate` in the project's root directory to migrate the database.
+3. **Start the Application:** Use the command `docker compose -f docker-compose-test.yml up` in the project's root directory to build and start the application.
+4. **Run Migrations:** Use the command `docker compose exec -it php ./artisan migrate` in the project's root directory to migrate the database.
 
 ## Deployment
 The deployment process mirrors the installation and setup. Ensure that your production environment is equipped with Docker and Docker Compose. For more advanced deployment strategies, consider container orchestration tools like Kubernetes or Docker Swarm.

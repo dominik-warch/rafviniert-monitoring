@@ -337,3 +337,65 @@ resources:
         id_field: id
         table: total_dependency_ratio
         geom_field: geometry
+
+  remancence-building:
+    type: collection
+    title: Remanence Buildings
+    description:
+    keywords:
+      -
+      - monitoring
+    links:
+      - type: text/html
+        rel: self
+        title: Collection of Total Dependency Ratio
+        href: https://example.com
+    extents:
+      spatial:
+        bbox:
+          [
+            7.711151594999341,
+            49.47714395615903,
+            7.815457562211972,
+            49.522819495461825,
+          ]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    providers:
+      - type: feature
+        name: PostgreSQL
+        data:
+          host: pgsql
+          port: 5432
+          dbname: monitoring
+          user: sail
+          password: password
+          search_path: [ public ]
+        id_field: id
+        table: remanence_buildings
+        geom_field: geometry
+
+  walkability-detail:
+    type: collection
+    title: Walkability Detail
+    description: Walkability Detail
+    keywords:
+      - walkability
+    links:
+      - type: text/html
+        rel: self
+        title: Collection of Total Dependency Ratio
+        href: https://example.com
+    extents:
+      spatial:
+        bbox:
+          [
+            7.711151594999341,
+            49.47714395615903,
+            7.815457562211972,
+            49.522819495461825,
+          ]
+        crs: http://www.opengis.net/def/crs/OGC/1.3/CRS84
+    providers:
+      - type: feature
+        name: GeoJSON
+        data: ./data/walkscore_detail.geojson

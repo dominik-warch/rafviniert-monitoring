@@ -38,8 +38,9 @@ RUN docker-php-ext-install \
     bz2
 
 # Install additional packages from PECL
-RUN pecl install zip && docker-php-ext-enable zip \
-    && pecl install msgpack && docker-php-ext-enable msgpack \
+#RUN pecl install zip && docker-php-ext-enable zip \
+#    && pecl install msgpack && docker-php-ext-enable msgpack \
+RUN pecl install msgpack && docker-php-ext-enable msgpack \
     && pecl install igbinary && docker-php-ext-enable igbinary \
     && yes | pecl install redis && docker-php-ext-enable redis
 

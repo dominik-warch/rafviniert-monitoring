@@ -39,6 +39,7 @@
                             <option value="remanence_building">Remanenzgebäude</option>
                             <option value="qualifying_residents_age_group">Wohnberechtigte Einwohner (Altersgruppe)</option>
                             <option value="qualifying_residents_gender">Wohnberechtigte Einwohner (Geschlecht)</option>
+                            <option value="net_migration">Wanderungssaldo</option>
                         </select>
                     </div>
                 </div>
@@ -67,7 +68,7 @@
         </div>
 
         @if(in_array($calculationType,
-            ["mean", "greying_index", "child_dependency_ratio", "aged_dependency_ratio", "total_dependency_ratio", "remanence_building", "qualifying_residents_age_group", "qualifying_residents_gender"]
+            ["median", "mean", "greying_index", "child_dependency_ratio", "aged_dependency_ratio", "total_dependency_ratio", "remanence_building", "qualifying_residents_age_group", "qualifying_residents_gender"]
         ))
         <div class="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-gray-900/10 pb-12 md:grid-cols-3">
             <div>
@@ -104,7 +105,7 @@
 
         <!-- Transactional demographic indicators -->
         @if(in_array($calculationType,
-            ["median"] // TODO, median muss wieder nach oben - nur als Test an dieser Stelle
+            ["net_migration"]
         ))
             <div class="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-gray-900/10 pb-12 md:grid-cols-3">
                 <div>
@@ -117,28 +118,8 @@
 
                 <div class="max-w-2xl space-y-10 md:col-span-2">
                     <div class="col-span-full">
-                        <label for="date_of_transaction_dataset" class="block text-sm font-medium leading-6 text-gray-900">
-                            Stichtag der Einwohnermeldedaten (Veränderungsdaten)
-                        </label>
-                        <div class="mt-2">
-                            <select
-                                wire:model.fill.change="dateOfTransactionDataset"
-                                id="date_of_transaction_dataset"
-                                name="date_of_transaction_dataset" required
-                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset
-                            ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm
-                            sm:leading-6"
-                            >
-                                @foreach($transactionDatasetDates as $date)
-                                    <option value="{{ $date }}">{{ $date }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-span-full">
                         <label for="transaction_year" class="block text-sm font-medium leading-6 text-gray-900">
-                            Transaktionsjahre
+                            Transaktionsjahr
                         </label>
                         <div class="mt-2">
                             <select
