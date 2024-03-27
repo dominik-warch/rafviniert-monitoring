@@ -82,6 +82,11 @@ class CitizensTransactionImport implements ToModel, WithChunkReading, WithHeadin
             "street" => $row[$this->columnMapping["street"]],
             "housenumber" => (string) $row[$this->columnMapping["housenumber"]],
             "housenumber_ext" => $row[$this->columnMapping["housenumber_extra"]],
+            "old_zip_code" => $row[$this->columnMapping["old_zip_code"]],
+            "old_city" => $row[$this->columnMapping["old_city"]],
+            "old_street" => $row[$this->columnMapping["old_street"]],
+            "old_housenumber" => (string) $row[$this->columnMapping["old_housenumber"]],
+            "old_housenumber_extra" => $row[$this->columnMapping["old_ousenumber_extra"]],
             "geometry"=> Point::make($geocodedAddress["lon"], $geocodedAddress["lat"])
         ]);
     }
@@ -168,7 +173,12 @@ class CitizensTransactionImport implements ToModel, WithChunkReading, WithHeadin
             $this->columnMapping["city"] => 'required|string|max:255',
             $this->columnMapping["street"] => 'required|string|max:255',
             $this->columnMapping["housenumber"] => 'required|regex:/^[a-zA-Z0-9\-]+$/',
-            $this->columnMapping["housenumber_extra"] => 'nullable|string'
+            $this->columnMapping["housenumber_extra"] => 'nullable|string',
+            $this->columnMapping["old_zip_code"] => 'alpha_num',
+            $this->columnMapping["old_city"] => 'string|max:255',
+            $this->columnMapping["old_street"] => 'string|max:255',
+            $this->columnMapping["old_housenumber"] => 'regex:/^[a-zA-Z0-9\-]+$/',
+            $this->columnMapping["old_housenumber_extra"] => 'nullable|string'
         ];
 
         $validator = Validator::make($row, $validationRules);

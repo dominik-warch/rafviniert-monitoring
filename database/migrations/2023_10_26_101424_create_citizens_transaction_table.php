@@ -23,6 +23,11 @@ return new class extends Migration
             $table->string('street');
             $table->string('housenumber');
             $table->string('housenumber_ext')->nullable();
+            $table->string('old_zip_code')->nullable();
+            $table->string('old_city')->nullable();
+            $table->string('old_street')->nullable();
+            $table->string('old_housenumber')->nullable();
+            $table->string('old_housenumber_extra')->nullable();
             $table->magellanPoint('geometry', 4326);
             $table->timestamps();
         });

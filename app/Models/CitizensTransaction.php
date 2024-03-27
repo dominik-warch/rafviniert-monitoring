@@ -33,6 +33,11 @@ class CitizensTransaction extends Model
         'street',
         'housenumber',
         'housenumber_ext',
+        'old_zip_code',
+        'old_city',
+        'old_street',
+        'old_housenumber',
+        'old_housenumber_extra',
         'geometry'
     ];
 }

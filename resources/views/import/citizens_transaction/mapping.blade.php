@@ -12,6 +12,11 @@
                 'Hausnummer-Zusatz' => 'housenumber_extra',
                 'Geburtsjahr/Geburtsdatum' => 'year_of_birth',
                 'Geschlecht' => 'gender'
+                'Vorherige PLZ' => 'old_zip_code',
+                'Vorheriger Ort' => 'old_city',
+                'Vorherige Straße' => 'old_street',
+                'Vorherige Hausnummer' => 'old_housenumber',
+                'Vorheriger Hausnummer-Zusatz' => 'old_housenumber_extra'
             ];
         @endphp
 
