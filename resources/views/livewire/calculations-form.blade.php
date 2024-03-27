@@ -40,6 +40,8 @@
                             <option value="qualifying_residents_age_group">Wohnberechtigte Einwohner (Altersgruppe)</option>
                             <option value="qualifying_residents_gender">Wohnberechtigte Einwohner (Geschlecht)</option>
                             <option value="net_migration">Wanderungssaldo</option>
+                            <option value="project_population">Bevölkerungsprognose</option>
+                            <option value="backcalculate_population">Rückrechnung der Bevölkerung</option>
                         </select>
                     </div>
                 </div>
@@ -105,7 +107,7 @@
 
         <!-- Transactional demographic indicators -->
         @if(in_array($calculationType,
-            ["net_migration"]
+            ["net_migration", "migration_volume"]
         ))
             <div class="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-gray-900/10 pb-12 md:grid-cols-3">
                 <div>
@@ -118,14 +120,108 @@
 
                 <div class="max-w-2xl space-y-10 md:col-span-2">
                     <div class="col-span-full">
-                        <label for="transaction_year" class="block text-sm font-medium leading-6 text-gray-900">
-                            Transaktionsjahr
+                        <label for="date_of_dataset" class="block text-sm font-medium leading-6 text-gray-900">
+                            Stichtag der Einwohnermeldedaten (Stammdaten)
                         </label>
                         <div class="mt-2">
                             <select
-                                wire:model.fill="transactionYear"
-                                id="transaction_year"
-                                name="transaction_year" required
+                                wire:model.fill.change="dateOfDataset"
+                                id="date_of_dataset"
+                                name="date_of_dataset" required
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset
+                                ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm
+                                sm:leading-6"
+                            >
+                                @foreach($datasetDates as $date)
+                                    <option value="{{ $date }}">{{ $date }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        <!-- Project Population -->
+        @if(in_array($calculationType,
+            ["project_population"]
+        ))
+            <div class="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-gray-900/10 pb-12 md:grid-cols-3">
+                <div>
+                    <h2 class="text-base font-semibold leading-7 text-gray-900">Bevölkerungsprognose</h2>
+                    <p class="mt-1 text-sm leading-6 text-gray-600">
+                        Platzhalter
+                    </p>
+                </div>
+
+                <div class="max-w-2xl space-y-10 md:col-span-2">
+                    <div class="col-span-full">
+                        <label for="start_year" class="block text-sm font-medium leading-6 text-gray-900">
+                            Beginn der Prognose (Jahr)
+                        </label>
+                        <div class="mt-2">
+                            <select
+                                wire:model.fill="startYear"
+                                id="start_year"
+                                name="start_year" required
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset
+                            ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm
+                            sm:leading-6"
+                            >
+                                @foreach($datasetDates as $date)
+                                    <option value="{{ $date }}">{{ $date }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- TODO: Int for target year -->
+                </div>
+            </div>
+        @endif
+
+         <!-- Backcalculate Population -->
+        @if(in_array($calculationType,
+            ["project_population"]
+        ))
+            <div class="grid grid-cols-1 gap-x-8 gap-y-10 border-b border-gray-900/10 pb-12 md:grid-cols-3">
+                <div>
+                    <h2 class="text-base font-semibold leading-7 text-gray-900">Rückrechnung von Bevölkerungsdaten</h2>
+                    <p class="mt-1 text-sm leading-6 text-gray-600">
+                        Platzhalter
+                    </p>
+                </div>
+
+                <div class="max-w-2xl space-y-10 md:col-span-2">
+                    <div class="col-span-full">
+                        <label for="start_year" class="block text-sm font-medium leading-6 text-gray-900">
+                            Ausgangsjahr der Rückrechnung
+                        </label>
+                        <div class="mt-2">
+                            <select
+                                wire:model.fill="startYear"
+                                id="start_year"
+                                name="start_year" required
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset
+                            ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm
+                            sm:leading-6"
+                            >
+                                @foreach($datasetDates as $date)
+                                    <option value="{{ $date }}">{{ $date }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-span-full">
+                        <label for="start_year" class="block text-sm font-medium leading-6 text-gray-900">
+                            Platzhalter (Transaktionsjahre)
+                        </label>
+                        <div class="mt-2">
+                            <select
+                                wire:model.fill="startYear"
+                                id="start_year"
+                                name="start_year" required
                                 class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset
                             ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm
                             sm:leading-6"
@@ -136,10 +232,10 @@
                             </select>
                         </div>
                     </div>
-
                 </div>
             </div>
         @endif
+
     </div>
 
     <div class="mt-6 flex items-center justify-end gap-x-6">

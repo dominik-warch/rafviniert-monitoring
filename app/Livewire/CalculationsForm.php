@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Jobs\BackCalculatePopulation;
 use App\Jobs\CalculateAgedDependencyRatio;
 use App\Jobs\CalculateChildDependencyRatio;
 use App\Jobs\CalculateGreyingIndex;
@@ -12,6 +13,7 @@ use App\Jobs\CalculateQualifyingResidentsGender;
 use App\Jobs\CalculateRemanenceBuilding;
 use App\Jobs\CalculateTotalDependencyRatio;
 use App\Jobs\CalculateNetMigration;
+use App\Jobs\CalculateMigrationVolume;
 use App\Models\CitizensMaster;
 use App\Models\CitizensTransaction;
 use App\Models\ReferenceGeometry;
@@ -45,6 +47,9 @@ class CalculationsForm extends Component
         $this->dateOfDataset = $this->datasetDates->first() ?? '';
         $this->referenceGeometry = $this->referenceGeometries->first() ?? '';
 
+        $this->startYear;
+        $this->endYear;
+
         // Only call updatedDateOfTransactionDataset if transactionDatasetDates is not empty
         if ($this->transactionDatasetDates->isNotEmpty()) {
             $this->dateOfTransactionDataset = $this->transactionDatasetDates->first();
@@ -68,15 +73,23 @@ class CalculationsForm extends Component
     private function getValidationRules(): array
     {
         $validationRules = [
-            'referenceGeometry' => 'required|exists:reference_geometries,name',
-            'calculationType' => 'required|in:median,mean,greying_index,child_dependency_ratio,aged_dependency_ratio,total_dependency_ratio,remanence_building,qualifying_residents_age_group,qualifying_residents_gender,net_migration',
+            'calculationType' => 'required|in:median,mean,greying_index,child_dependency_ratio,aged_dependency_ratio,total_dependency_ratio,remanence_building,qualifying_residents_age_group,qualifying_residents_gender,net_migration, project_population, backcalculate_population',
         ];
 
         if (in_array($this->calculationType, ["median", "mean", "greying_index", "child_dependency_ratio", "aged_dependency_ratio", "total_dependency_ratio", "remanence_building", "qualifying_residents_age_group", "qualifying_residents_gender"])) {
             $validationRules['dateOfDataset'] = 'required|date';
+            $validationRules['referenceGeometry'] = 'required|exists:reference_geometries,name';
         } elseif (in_array($this->calculationType, ["net_migration"])) {
             $validationRules['transactionYear'] = 'required|integer';
-        }
+            $validationRules['referenceGeometry'] = 'required|exists:reference_geometries,name';
+        } elseif (in_array($this->calculationType, ["project_population"])) {
+            $validationRules['startYear'] = 'required|integer';
+            $validationRules['endYear'] = 'required|integer|gte:startYear';
+            $validationRules['referenceGeometry'] = 'required|exists:reference_geometries,name';
+        } elseif (in_array($this->calculationType, ["backcalculate_population"])) {
+            $validationRules['startYear'] = 'required|integer';
+            $validationRules['endYear'] = 'required|integer|gte:startYear';
+        } 
 
         return $validationRules;
     }
@@ -113,6 +126,15 @@ class CalculationsForm extends Component
                 break;
             case "net_migration":
                 CalculateNetMigration::dispatch($this->referenceGeometry, $this->transactionYear);
+                break;
+            case "migration_volume":
+                CalculateMigrationVolume::dispatch($this->referenceGeometry, $this->transactionYear);
+                break;
+            case "project_population":
+                ProjectPopulation::dispatch($this->referenceGeometry, $this->startYear, $this->endYear);
+                break;
+            case "backcalculate_population":
+                BackCalculatePopulation::dispatch($this->referenceGeometry, $this->startYear, $this->endYear);
                 break;
             default:
                 Log::error('Unknown calculation type.');
